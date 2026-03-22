@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Klinik Quiz - Takım Girişi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Adım 1: Takım girişi -->
+    <div id="team-screen" class="screen active">
+      <div class="card">
+        <div class="qr-hint">
+          <span class="qr-icon">📱</span>
+          <p>Bu sayfaya QR kodu okutarak ulaştınız</p>
+        </div>
+        <h1>Klinik Eğitim Quiz Oyunu</h1>
+        <p class="subtitle">Oyuna katılmak için takım adınızı girin</p>
+        <form id="team-form">
+          <input type="text" id="team-input" placeholder="Örn: Takım 1, Kırmızı Takım..." maxlength="50" autocomplete="off">
+          <button type="submit" class="btn btn-primary">Katıl</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Adım 2: Soru ekranı -->
+    <div id="game-screen" class="screen">
+      <header class="game-header">
+        <span id="team-badge"></span>
+        <span id="question-counter">Soru 1/17</span>
+      </header>
+      <div class="question-card">
+        <h2 id="question-text"></h2>
+        <div id="options" class="options"></div>
+        <div id="result-message" class="result-message"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Tahtası - Canlı Skor Grafiği</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="tahta-body">
+  <div class="tahta">
+    <header class="tahta-header">
+      <h1>Klinik Eğitim Quiz - Canlı Skor Tahtası</h1>
+      <div class="qr-box">
+        <p>Oyuncular bu QR kodu okutarak katılır:</p>
+        <img id="qr-img" src="" alt="QR Kod" width="120" height="120">
+        <small id="game-url"></small>
+      </div>
+      <div class="tahta-controls">
+        <button id="prev-btn" class="btn btn-small">← Önceki</button>
+        <span id="tahta-question-num">Soru 1/17</span>
+        <button id="next-btn" class="btn btn-small">Sonraki →</button>
+        <button id="reset-btn" class="btn btn-danger">Yeniden Başlat</button>
+      </div>
+    </header>
+
+    <div class="tahta-content">
+      <div class="current-question-box">
+        <h2 id="tahta-question-text"></h2>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="score-chart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/tahta.js"></script>
+</body>
+</html>

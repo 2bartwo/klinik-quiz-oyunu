@@ -1,0 +1,189 @@
+[
+  {
+    "id": 1,
+    "text": "Klinik rehber hemşirenin temel görevi aşağıdakilerden hangisidir?",
+    "options": {
+      "A": "Hastane yönetimini denetlemek",
+      "B": "Öğrenci hemşirelerin klinik öğrenmesini desteklemek",
+      "C": "Sadece hasta bakımını yürütmek",
+      "D": "Tıbbi tanı koymak"
+    },
+    "correct": "B"
+  },
+  {
+    "id": 2,
+    "text": "Klinik eğitimde geri bildirimin temel amacı aşağıdakilerden hangisidir?",
+    "options": {
+      "A": "Öğrenciyi eleştirmek",
+      "B": "Öğrencinin hatalarını cezalandırmak",
+      "C": "Öğrencinin performansını geliştirmek",
+      "D": "Öğrenciyi klinikten uzaklaştırmak"
+    },
+    "correct": "C"
+  },
+  {
+    "id": 3,
+    "text": "Etkili geri bildirimin özelliklerinden biri aşağıdakilerden hangisidir?",
+    "options": {
+      "A": "Belirsiz ve genel olması",
+      "B": "Zamanında verilmesi",
+      "C": "Sadece olumsuz yönleri içermesi",
+      "D": "Öğrencinin yanında başkalarının önünde verilmesi"
+    },
+    "correct": "B"
+  },
+  {
+    "id": 4,
+    "text": "Klinik rehber hemşirenin öğrenciye yapıcı geri bildirim vermesi aşağıdakilerden hangisini en çok destekler?",
+    "options": {
+      "A": "Öğrencinin motivasyonunun azalmasını",
+      "B": "Öğrencinin öğrenme sürecinin gelişmesini",
+      "C": "Öğrencinin klinikten uzaklaşmasını",
+      "D": "Öğrencinin hata yapma korkusunun artmasını"
+    },
+    "correct": "B"
+  },
+  {
+    "id": 5,
+    "text": "Aşağıdakilerden hangisi yapıcı geri bildirim örneğidir?",
+    "options": {
+      "A": "\"Hiç doğru yapamıyorsun.\"",
+      "B": "\"Bu uygulamada el hijyenine daha fazla dikkat edersen çok daha iyi olacak.\"",
+      "C": "\"Bu işi sana yaptırmayacağım.\"",
+      "D": "\"Sen bu mesleğe uygun değilsin.\""
+    },
+    "correct": "B"
+  },
+  {
+    "id": 6,
+    "text": "Klinik rehber hemşire ile öğrenci hemşire arasında etkili iletişim kurulması aşağıdakilerden hangisini sağlar?",
+    "options": {
+      "A": "Öğrenme sürecinin olumsuz etkilenmesini",
+      "B": "Geri bildirimin etkisinin artmasını",
+      "C": "Öğrencinin pasif kalmasını",
+      "D": "Öğrencinin klinik uygulamadan uzaklaşmasını"
+    },
+    "correct": "B"
+  },
+  {
+    "id": 7,
+    "text": "Klinik uygulamalarda geri bildirimin zamanında verilmesi neden önemlidir?",
+    "options": {
+      "A": "Öğrenciyi cezalandırmak için",
+      "B": "Öğrencinin hatasını hemen fark edip düzeltmesini sağlamak için",
+      "C": "Öğrenciyi klinikten uzaklaştırmak için",
+      "D": "Sadece not vermek için"
+    },
+    "correct": "B"
+  },
+  {
+    "id": 8,
+    "text": "Aşağıdakilerden hangisi klinik rehber hemşirenin rollerinden biridir?",
+    "options": {
+      "A": "Öğrenciyi klinikten uzaklaştırmak",
+      "B": "Öğrencinin öğrenme sürecine rehberlik etmek",
+      "C": "Sadece idari işler yapmak",
+      "D": "Öğrenciyi değerlendirmemek"
+    },
+    "correct": "B"
+  },
+  {
+    "id": 9,
+    "text": "Etkili geri bildirim sürecinde aşağıdakilerden hangisi önemlidir?",
+    "options": {
+      "A": "Öğrenciyi küçük düşürmek",
+      "B": "Öğrencinin güçlü ve geliştirilmesi gereken yönlerini belirtmek",
+      "C": "Öğrenciyle iletişim kurmamak",
+      "D": "Geri bildirimi geciktirmek"
+    },
+    "correct": "B"
+  },
+  {
+    "id": 10,
+    "text": "Klinik rehber hemşirenin öğrenciye sürekli destekleyici yaklaşımı aşağıdakilerden hangisini artırır?",
+    "options": {
+      "A": "Öğrencinin stresini ve kaygısını",
+      "B": "Öğrencinin motivasyonunu ve özgüvenini",
+      "C": "Öğrencinin klinikten uzaklaşmasını",
+      "D": "Öğrencinin hata yapma korkusunu"
+    },
+    "correct": "B"
+  },
+  {
+    "id": 11,
+    "text": "Klinik eğitimde geri bildirim verilmemesi aşağıdaki sonuçlardan hangisine yol açabilir?",
+    "options": {
+      "A": "Öğrenmenin hızlanmasına",
+      "B": "Öğrencinin performansının gelişmesine",
+      "C": "Öğrencinin hatalarını fark edememesine",
+      "D": "Öğrencinin motivasyonunun artmasına"
+    },
+    "correct": "C"
+  },
+  {
+    "id": 12,
+    "text": "Aşağıdakilerden hangisi geri bildirim verirken dikkat edilmesi gereken bir ilkedir?",
+    "options": {
+      "A": "Öğrenciyi yargılamak",
+      "B": "Somut davranışlara odaklanmak",
+      "C": "Genelleme yapmak",
+      "D": "Öğrenciyi eleştirmek"
+    },
+    "correct": "B"
+  },
+  {
+    "id": 13,
+    "text": "Klinik öğretimde kullanılan sandviç geri bildirim tekniğinin doğru uygulanma sırası aşağıdakilerden hangisidir?",
+    "options": {
+      "A": "Olumsuz geri bildirim → Olumlu geri bildirim → Geliştirme önerisi",
+      "B": "Olumlu geri bildirim → Geliştirilmesi gereken yön → Olumlu geri bildirim",
+      "C": "Geliştirilmesi gereken yön → Olumlu geri bildirim → Değerlendirme",
+      "D": "Olumlu geri bildirim → Değerlendirme → Eleştiri"
+    },
+    "correct": "B"
+  },
+  {
+    "id": 14,
+    "text": "Klinik rehber hemşirelerin öğrencilere geri bildirim verirken öğrenme ortamını destekleyici bir yaklaşım benimsemeleri aşağıdaki sonuçlardan hangisini en doğrudan etkiler?",
+    "options": {
+      "A": "Hastanenin idari işleyişini",
+      "B": "Öğrencinin mesleki kimlik gelişimini ve klinik özgüvenini",
+      "C": "Hastane bütçesini",
+      "D": "Klinik personel sayısını"
+    },
+    "correct": "B"
+  },
+  {
+    "id": 15,
+    "text": "Klinik öğretimde verilen geri bildirimin etkili olabilmesi için aşağıdaki özelliklerden hangisinin bulunması en kritik unsurlardan biridir?",
+    "options": {
+      "A": "Öğrencinin kişilik özelliklerine odaklanması",
+      "B": "Genel ifadeler içermesi",
+      "C": "Spesifik davranışlara dayalı olması",
+      "D": "Sadece klinik eğitimin sonunda verilmesi"
+    },
+    "correct": "C"
+  },
+  {
+    "id": 16,
+    "text": "Aşağıdaki geri bildirim yaklaşımlarından hangisi Pendleton geri bildirim modelinin temel ilkeleriyle en çok örtüşmektedir?",
+    "options": {
+      "A": "Öğretici, öğrencinin hatalarını doğrudan sıralar ve düzeltmesini ister.",
+      "B": "Önce öğrenci kendi performansını değerlendirir, ardından güçlü yönler ve geliştirilmesi gereken alanlar tartışılır.",
+      "C": "Öğretici geri bildirimi yalnızca yazılı olarak verir.",
+      "D": "Öğrenciye yalnızca hatalı uygulamalar hakkında bilgi verilir."
+    },
+    "correct": "B"
+  },
+  {
+    "id": 17,
+    "text": "Klinik rehber hemşirelerin öğrencilere geri bildirim verirken öğrenme ortamını destekleyici bir yaklaşım benimsemeleri aşağıdaki sonuçlardan hangisini en doğrudan etkiler?",
+    "options": {
+      "A": "Hastanenin idari işleyişini",
+      "B": "Öğrencinin mesleki kimlik gelişimini ve klinik özgüvenini",
+      "C": "Hastane bütçesini",
+      "D": "Klinik personel sayısını"
+    },
+    "correct": "B"
+  }
+]
