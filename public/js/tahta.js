@@ -1,23 +1,43 @@
 const socket = io();
 
-// QR kod - oyuncu giriş URL'si
+// QR kod
 const gameUrl = window.location.origin;
 document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(gameUrl)}`;
 document.getElementById('game-url').textContent = gameUrl;
 
 const questionNumEl = document.getElementById('tahta-question-num');
 const questionTextEl = document.getElementById('tahta-question-text');
+const startBtn = document.getElementById('start-btn');
+const endBtn = document.getElementById('end-btn');
 const prevBtn = document.getElementById('prev-btn');
 const nextBtn = document.getElementById('next-btn');
 const resetBtn = document.getElementById('reset-btn');
+const statsTableBody = document.getElementById('stats-table-body');
 
-let chart = null;
+let scoreChart = null;
+let wrongChart = null;
 
 // Tahta olarak katıl
 socket.emit('join-board');
 
-socket.on('scores-update', (scores) => {
-  updateChart(scores);
+socket.on('scores-update', (data) => {
+  const correct = data.correct || data;
+  const wrong = data.wrong || {};
+  updateChart(scoreChart, 'score-chart', correct, 'rgba(46, 213, 115, 0.7)', '#2ed573');
+  updateChart(wrongChart, 'wrong-chart', wrong, 'rgba(255, 107, 129, 0.7)', '#ff6b81');
+});
+
+socket.on('stats-update', (stats) => {
+  statsTableBody.innerHTML = '';
+  stats.forEach((s, i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>Soru ${i + 1}</td>
+      <td class="stat-correct">${s.correct || 0}</td>
+      <td class="stat-wrong">${s.wrong || 0}</td>
+    `;
+    statsTableBody.appendChild(tr);
+  });
 });
 
 socket.on('question-change', (data) => {
@@ -26,21 +46,21 @@ socket.on('question-change', (data) => {
   questionTextEl.textContent = question?.text || '—';
 });
 
-function updateChart(scores) {
+function updateChart(chart, canvasId, scores, bgColor, borderColor) {
   const labels = Object.keys(scores);
   const data = Object.values(scores);
 
   if (!chart) {
-    const ctx = document.getElementById('score-chart').getContext('2d');
+    const ctx = document.getElementById(canvasId).getContext('2d');
     chart = new Chart(ctx, {
       type: 'bar',
       data: {
         labels: labels,
         datasets: [{
-          label: 'Puan',
+          label: '',
           data: data,
-          backgroundColor: 'rgba(0, 212, 170, 0.7)',
-          borderColor: '#00d4aa',
+          backgroundColor: bgColor,
+          borderColor: borderColor,
           borderWidth: 2,
           borderRadius: 8
         }]
@@ -53,23 +73,25 @@ function updateChart(scores) {
           legend: { display: false },
           tooltip: {
             callbacks: {
-              label: (ctx) => ` ${ctx.raw} puan`
+              label: (ctx) => ` ${ctx.raw}`
             }
           }
         },
         scales: {
           x: {
             beginAtZero: true,
-            ticks: { color: '#8888a0', stepSize: 1 },
+            ticks: { color: '#8b9cad', stepSize: 1 },
             grid: { color: 'rgba(255,255,255,0.06)' }
           },
           y: {
-            ticks: { color: '#f0f0f5' },
+            ticks: { color: '#f5f6fa' },
             grid: { display: false }
           }
         }
       }
     });
+    if (canvasId === 'score-chart') scoreChart = chart;
+    else wrongChart = chart;
   } else {
     chart.data.labels = labels;
     chart.data.datasets[0].data = data;
@@ -77,6 +99,12 @@ function updateChart(scores) {
   }
 }
 
+startBtn.addEventListener('click', () => socket.emit('start-game'));
+endBtn.addEventListener('click', () => {
+  if (confirm('Oyunu bitirmek istediğinize emin misiniz? Tüm oyunculara teşekkür mesajı gösterilecek.')) {
+    socket.emit('end-game');
+  }
+});
 prevBtn.addEventListener('click', () => socket.emit('prev-question'));
 nextBtn.addEventListener('click', () => socket.emit('next-question'));
 resetBtn.addEventListener('click', () => {

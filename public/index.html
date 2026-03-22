@@ -27,7 +27,17 @@
       </div>
     </div>
 
-    <!-- Adım 2: Soru ekranı -->
+    <!-- Adım 2: Bekleme ekranı -->
+    <div id="waiting-screen" class="screen">
+      <div class="card">
+        <div class="waiting-spinner"></div>
+        <h2>Oyun başlamak üzere</h2>
+        <p>Lütfen bekleyin. Sunucu oyunu başlattığında sorular görünecektir.</p>
+        <p id="waiting-team-badge" class="subtitle" style="margin-top:1rem"></p>
+      </div>
+    </div>
+
+    <!-- Adım 3: Soru ekranı -->
     <div id="game-screen" class="screen">
       <header class="game-header">
         <span id="team-badge"></span>
@@ -37,6 +47,15 @@
         <h2 id="question-text"></h2>
         <div id="options" class="options"></div>
         <div id="result-message" class="result-message"></div>
+      </div>
+    </div>
+
+    <!-- Adım 4: Bitiş ekranı -->
+    <div id="end-screen" class="screen">
+      <div class="card end-screen">
+        <p class="thank-you">Katıldığınız için teşekkürler!</p>
+        <h2>Oyun sona erdi</h2>
+        <p>Bu etkinliğe katılımınız için teşekkür ederiz.</p>
       </div>
     </div>
   </div>

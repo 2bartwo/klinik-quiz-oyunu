@@ -13,10 +13,17 @@ app.use(express.json());
 
 // Takım skorları: { "Takım 1": 5, "Takım 2": 3, ... }
 const teamScores = {};
+// Yanlış sayıları: { "Takım 1": 2, ... }
+const teamWrongScores = {};
 // Her soru için hangi takımlar cevap verdi (tekrar cevap vermesin)
 const answeredByTeam = {};
+// Soru bazlı istatistik: [{ correct: 3, wrong: 2 }, ...]
+const questionStats = questions.map(() => ({ correct: 0, wrong: 0 }));
 // Mevcut soru indeksi (0-16)
 let currentQuestionIndex = 0;
+// Oyun durumu
+let gameStarted = false;
+let gameEnded = false;
 
 // Ana sayfa - oyuncu girişi
 app.get('/', (req, res) => {
@@ -42,17 +49,29 @@ app.get('/api/current-question', (req, res) => {
   });
 });
 
+// Oyun durumu
+app.get('/api/game-state', (req, res) => {
+  res.json({ gameStarted, gameEnded });
+});
+
+function emitGameState() {
+  io.to('board').emit('game-state', { gameStarted, gameEnded });
+  io.to('players').emit('game-state', { gameStarted, gameEnded });
+}
+
 // Socket.io - gerçek zamanlı iletişim
 io.on('connection', (socket) => {
   // Tahta bağlandığında mevcut skorları ve soruyu gönder
   socket.on('join-board', () => {
     socket.join('board');
-    socket.emit('scores-update', teamScores);
+    socket.emit('scores-update', { correct: teamScores, wrong: teamWrongScores });
+    socket.emit('stats-update', questionStats);
     socket.emit('question-change', {
       index: currentQuestionIndex,
       question: questions[currentQuestionIndex],
       total: questions.length
     });
+    socket.emit('game-state', { gameStarted, gameEnded });
   });
 
   // Oyuncu takım adıyla katıldı
@@ -60,7 +79,10 @@ io.on('connection', (socket) => {
     if (!teamName || typeof teamName !== 'string') return;
     const name = teamName.trim().slice(0, 50);
     if (!name) return;
-    if (!teamScores[name]) teamScores[name] = 0;
+    if (!teamScores[name]) {
+      teamScores[name] = 0;
+      teamWrongScores[name] = 0;
+    }
     socket.teamName = name;
     socket.join('players');
     socket.emit('joined', {
@@ -70,12 +92,15 @@ io.on('connection', (socket) => {
         index: currentQuestionIndex,
         question: questions[currentQuestionIndex],
         total: questions.length
-      }
+      },
+      gameStarted,
+      gameEnded
     });
   });
 
   // Cevap gönder
   socket.on('submit-answer', (data) => {
+    if (!gameStarted || gameEnded) return socket.emit('error', 'Oyun henüz başlamadı veya bitti.');
     const { answer, questionIndex } = data;
     const team = socket.teamName;
     if (!team) return socket.emit('error', 'Önce takım adınızı girin.');
@@ -92,11 +117,17 @@ io.on('connection', (socket) => {
     const question = questions[questionIndex];
     const correct = question && answer === question.correct;
 
+    answeredByTeam[key] = true;
     if (correct) {
       teamScores[team] = (teamScores[team] || 0) + 1;
-      answeredByTeam[key] = true;
-      io.to('board').emit('scores-update', teamScores);
+      questionStats[questionIndex].correct++;
+    } else {
+      teamWrongScores[team] = (teamWrongScores[team] || 0) + 1;
+      questionStats[questionIndex].wrong++;
     }
+
+    io.to('board').emit('scores-update', { correct: teamScores, wrong: teamWrongScores });
+    io.to('board').emit('stats-update', questionStats);
 
     socket.emit('result', {
       correct,
@@ -138,12 +169,30 @@ io.on('connection', (socket) => {
     }
   });
 
+  // Öğretmen: Oyunu başlat
+  socket.on('start-game', () => {
+    gameStarted = true;
+    gameEnded = false;
+    emitGameState();
+  });
+
+  // Öğretmen: Oyunu bitir
+  socket.on('end-game', () => {
+    gameEnded = true;
+    emitGameState();
+  });
+
   // Öğretmen: Oyunu sıfırla
   socket.on('reset-game', () => {
     Object.keys(teamScores).forEach(k => delete teamScores[k]);
+    Object.keys(teamWrongScores).forEach(k => delete teamWrongScores[k]);
     Object.keys(answeredByTeam).forEach(k => delete answeredByTeam[k]);
+    questionStats.forEach(s => { s.correct = 0; s.wrong = 0; });
     currentQuestionIndex = 0;
-    io.to('board').emit('scores-update', {});
+    gameStarted = false;
+    gameEnded = false;
+    io.to('board').emit('scores-update', { correct: {}, wrong: {} });
+    io.to('board').emit('stats-update', questionStats);
     io.to('board').emit('question-change', {
       index: 0,
       question: questions[0],
@@ -154,6 +203,7 @@ io.on('connection', (socket) => {
       question: questions[0],
       total: questions.length
     });
+    emitGameState();
   });
 });
 

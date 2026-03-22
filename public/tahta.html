@@ -20,6 +20,8 @@
         <small id="game-url"></small>
       </div>
       <div class="tahta-controls">
+        <button id="start-btn" class="btn btn-start">▶ Oyunu Başlat</button>
+        <button id="end-btn" class="btn btn-end">⏹ Oyunu Bitir</button>
         <button id="prev-btn" class="btn btn-small">← Önceki</button>
         <span id="tahta-question-num">Soru 1/17</span>
         <button id="next-btn" class="btn btn-small">Sonraki →</button>
@@ -32,8 +34,25 @@
         <h2 id="tahta-question-text"></h2>
       </div>
 
-      <div class="chart-container">
-        <canvas id="score-chart"></canvas>
+      <div class="charts-row">
+        <div class="chart-container">
+          <h3 style="margin-bottom:0.5rem;font-size:0.95rem;color:var(--text-muted)">Doğru Cevaplar</h3>
+          <canvas id="score-chart"></canvas>
+        </div>
+        <div class="chart-container">
+          <h3 style="margin-bottom:0.5rem;font-size:0.95rem;color:var(--text-muted)">Yanlış Cevaplar</h3>
+          <canvas id="wrong-chart"></canvas>
+        </div>
+      </div>
+
+      <div class="question-stats">
+        <h3>Soru Bazlı İstatistik (Doğru / Yanlış)</h3>
+        <table>
+          <thead>
+            <tr><th>Soru</th><th>Doğru</th><th>Yanlış</th></tr>
+          </thead>
+          <tbody id="stats-table-body"></tbody>
+        </table>
       </div>
     </div>
   </div>

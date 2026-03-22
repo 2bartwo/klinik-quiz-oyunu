@@ -2,16 +2,28 @@
 
 ## 1. GitHub'a Yükle
 
-```bash
-# GitHub'da yeni repo oluştur: https://github.com/new
-# Repo adı: klinik-quiz-oyunu (veya istediğin isim)
-# Public seç, README ekleme (zaten var)
+### Adım A: GitHub'da repo oluştur
 
-# Sonra bu komutları çalıştır:
+1. https://github.com/new adresine git
+2. **Repository name:** `klinik-quiz-oyunu` (veya istediğin isim)
+3. **Public** seç
+4. ❌ README ekleme, .gitignore ekleme – hepsi projede var
+5. **Create repository** tıkla
+
+### Adım B: Projeyi gönder
+
+GitHub repo oluşturduktan sonra, sayfada gösterilen URL'yi kopyala. Sonra PowerShell'de:
+
+```powershell
+cd "c:\Users\Bartu\OneDrive\Desktop\Programlar\Projeler\minigame"
+
+# KULLANICI_ADIN yerine kendi GitHub kullanıcı adını yaz:
 git remote add origin https://github.com/KULLANICI_ADIN/klinik-quiz-oyunu.git
-git branch -M main
+
 git push -u origin main
 ```
+
+(GitHub kullanıcı adı/şifre veya token isteyebilir – giriş yap)
 
 ## 2. Railway ile Deploy (Öğrenci – Ücretsiz)
 
@@ -20,23 +32,49 @@ git push -u origin main
 3. **"New Project"** → **"Deploy from GitHub repo"**
 4. Reponu seç: `klinik-quiz-oyunu`
 5. Deploy otomatik başlar (2-3 dk)
-6. **"Settings"** → **"Networking"** → **"Generate Domain"**  
-   → `klinik-quiz-xxx.up.railway.app` gibi bir URL alırsın
+6. **Domain oluşturma** – Önemli: Proje değil, **servisi** (kutucuğu) seç:
+   - Ana ekranda deploy edilen **servis kutusuna tıkla** (GitHub ikonlu kutucuk)
+   - Sağda veya üstte **Settings** sekmesine gir
+   - **"Networking"** veya **"Public Networking"** bölümünü bul
+   - **"Generate Domain"** butonuna tıkla
+   - Alternatif: Servis kartında "Expose" veya "Generate Domain" yazan uyarı/banner varsa oradan da tıklayabilirsin
+   - Sonuç: `xxx.up.railway.app` gibi bir URL alırsın
 
-## 3. Kendi Domainini Bağla (Railway)
+**Hâlâ bulamıyorsan:** Railway arayüzü değişebilir. Şunları dene:
+- Sol menüde **"Variables"**, **"Deployments"** yanında **"Settings"** olmalı
+- Settings içinde aşağı kaydır – **"Networking"**, **"Domains"** veya **"Public"** başlığına bak
+- Servis kutusunun üzerinde **"⋯" (üç nokta)** menüsüne tıkla, orada domain seçeneği olabilir
 
-1. Railway'de projenin **Settings** → **Networking** → **Custom Domain**
-2. **"Add Custom Domain"** → Domainini yaz (örn: `quiz.senindomain.com`)
-3. Railway sana DNS ayarlarını gösterir:
-   - **CNAME:** `quiz` → `klinik-quiz-xxx.up.railway.app
-   - veya **A kaydı** (IP adresi)
-4. Domain sağlayıcında (GoDaddy, Namecheap, Cloudflare vb.) DNS ayarlarına git
-5. Yeni kayıt ekle:
-   - **Tip:** CNAME
-   - **Name/Host:** quiz (veya @ ana domain için)
-   - **Value/Points to:** `klinik-quiz-xxx.up.railway.app`
+## 3. bartwo.me Domainini Bağla (Railway)
 
-6. 5-30 dakika bekle, SSL otomatik aktif olur.
+Quiz uygulaması **quiz.bartwo.me** adresinde çalışacak.
+
+### Railway tarafı
+
+1. Railway'de servise tıkla → **Settings** → **Networking** / **Public Networking**
+2. **"+ Custom Domain"** veya **"Add Custom Domain"** tıkla
+3. Şunu yaz: **`quiz.bartwo.me`**
+4. Railway sana bir CNAME değeri verecek, örn: `klinik-quiz-xxxx.up.railway.app`
+
+### DNS tarafı (bartwo.me'nin DNS ayarları)
+
+bartwo.me'yi nereden yönetiyorsun? (GoDaddy, Namecheap, Cloudflare, Hostinger vb.)
+
+**Yeni DNS kaydı ekle:**
+
+| Tip   | Name/Host | Value/Points to |
+|-------|-----------|-----------------|
+| CNAME | quiz      | (Railway'in verdiği adres) |
+
+- **Name:** `quiz` → adres `quiz.bartwo.me` olur
+- **Value:** Railway'de yazan `xxx.up.railway.app` adresini kopyala yapıştır
+
+### Doğrulama
+
+5–30 dakika sonra `https://quiz.bartwo.me` açılmalı. SSL otomatik gelir.
+
+- **Oyuncu girişi:** https://quiz.bartwo.me
+- **Tahta:** https://quiz.bartwo.me/tahta
 
 ## Alternatif: Render (Ücretsiz)
 
@@ -49,6 +87,6 @@ git push -u origin main
 
 ## Sonuç
 
-- **Oyuncu girişi:** `https://quiz.senindomain.com`
-- **Tahta:** `https://quiz.senindomain.com/tahta`
-- QR kod tahta sayfasında otomatik güncellenir.
+- **Oyuncu girişi:** https://quiz.bartwo.me
+- **Tahta:** https://quiz.bartwo.me/tahta
+- QR kod tahta sayfasında otomatik olarak quiz.bartwo.me adresini gösterecek.

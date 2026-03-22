@@ -1,10 +1,13 @@
 const socket = io();
 
 const teamScreen = document.getElementById('team-screen');
+const waitingScreen = document.getElementById('waiting-screen');
 const gameScreen = document.getElementById('game-screen');
+const endScreen = document.getElementById('end-screen');
 const teamForm = document.getElementById('team-form');
 const teamInput = document.getElementById('team-input');
 const teamBadge = document.getElementById('team-badge');
+const waitingTeamBadge = document.getElementById('waiting-team-badge');
 const questionCounter = document.getElementById('question-counter');
 const questionText = document.getElementById('question-text');
 const optionsEl = document.getElementById('options');
@@ -13,6 +16,11 @@ const resultMessage = document.getElementById('result-message');
 let teamName = null;
 let currentQuestion = null;
 let currentIndex = 0;
+
+function showScreen(screen) {
+  [teamScreen, waitingScreen, gameScreen, endScreen].forEach(s => s.classList.remove('active'));
+  screen.classList.add('active');
+}
 
 // Takım girişi
 teamForm.addEventListener('submit', (e) => {
@@ -25,10 +33,32 @@ teamForm.addEventListener('submit', (e) => {
 
 socket.on('joined', (data) => {
   teamBadge.textContent = data.teamName;
+  waitingTeamBadge.textContent = data.teamName + ' olarak katıldınız.';
   teamScreen.classList.remove('active');
-  gameScreen.classList.add('active');
-  const q = data.currentQuestion || { index: 0, question: null, total: 17 };
-  loadQuestion(q);
+
+  if (data.gameEnded) {
+    showScreen(endScreen);
+  } else if (data.gameStarted) {
+    showScreen(gameScreen);
+    const q = data.currentQuestion || { index: 0, question: null, total: 17 };
+    loadQuestion(q);
+  } else {
+    showScreen(waitingScreen);
+  }
+});
+
+socket.on('game-state', (data) => {
+  if (data.gameEnded) {
+    showScreen(endScreen);
+  } else if (data.gameStarted) {
+    showScreen(gameScreen);
+    fetch('/api/current-question')
+      .then(r => r.json())
+      .then(loadQuestion)
+      .catch(() => {});
+  } else {
+    showScreen(waitingScreen);
+  }
 });
 
 // Soru değişimi (sunucudan)
@@ -73,7 +103,6 @@ function selectOption(btn) {
   if (btn.disabled) return;
   const letter = btn.dataset.letter;
 
-  // Diğer seçimleri kaldır
   optionsEl.querySelectorAll('.option').forEach(o => {
     o.classList.remove('selected');
     o.disabled = true;
@@ -100,13 +129,3 @@ socket.on('result', (data) => {
 socket.on('error', (msg) => {
   alert(msg);
 });
-
-// Sayfa yüklendiğinde mevcut soruyu al
-fetch('/api/current-question')
-  .then(r => r.json())
-  .then(data => {
-    if (teamName) {
-      loadQuestion(data);
-    }
-  })
-  .catch(() => {});
