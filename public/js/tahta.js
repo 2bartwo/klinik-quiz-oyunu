@@ -19,6 +19,8 @@ const questionNumBoxEl = document.getElementById('tahta-question-num-box');
 const questionTextEl = document.getElementById('tahta-question-text');
 const answeredCountEl = document.getElementById('tahta-answered-count');
 const answerBreakdownBtn = document.getElementById('answer-breakdown-btn');
+const resetQuestionBtn = document.getElementById('reset-question-btn');
+const resetParticipantBtn = document.getElementById('reset-participant-btn');
 const activityBtn = document.getElementById('activity-btn');
 const participantCountEl = document.getElementById('participant-count');
 const participantListEl = document.getElementById('participant-list');
@@ -87,6 +89,24 @@ answerBreakdownBtn.addEventListener('click', () => {
     </div>
   `;
   breakdownModal.classList.add('open');
+});
+
+resetQuestionBtn.addEventListener('click', () => {
+  if (confirm('Bu sorudaki tüm işaretlemeleri sıfırlamak istiyor musunuz?')) {
+    socket.emit('reset-current-question');
+  }
+});
+
+resetParticipantBtn.addEventListener('click', () => {
+  if (!lastTeams.length) {
+    alert('Sıfırlanacak katılımcı bulunamadı.');
+    return;
+  }
+  const list = lastTeams.join(', ');
+  const input = prompt(`Sıfırlanacak katılımcı adını yazın:\n${list}`);
+  const target = String(input || '').trim();
+  if (!target) return;
+  socket.emit('reset-current-for-participant', target);
 });
 
 socket.on('activity-log-update', (entries) => {

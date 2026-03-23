@@ -163,6 +163,28 @@ function emitGameState() {
   io.to('players').emit('game-state', { gameStarted, gameEnded });
 }
 
+function revokeAnswerForParticipant(participantName, questionIndex) {
+  const key = `${participantName}-${questionIndex}`;
+  const previous = answeredByTeam[key];
+  if (!previous) return false;
+
+  const stat = questionStats[questionIndex];
+  if (previous === 'correct') {
+    teamScores[participantName] = Math.max(0, (teamScores[participantName] || 0) - 1);
+    stat.correct = Math.max(0, stat.correct - 1);
+    const idx = stat.correctTeams.indexOf(participantName);
+    if (idx >= 0) stat.correctTeams.splice(idx, 1);
+  } else if (previous === 'wrong') {
+    teamWrongScores[participantName] = Math.max(0, (teamWrongScores[participantName] || 0) - 1);
+    stat.wrong = Math.max(0, stat.wrong - 1);
+    const idx = stat.wrongTeams.indexOf(participantName);
+    if (idx >= 0) stat.wrongTeams.splice(idx, 1);
+  }
+
+  delete answeredByTeam[key];
+  return true;
+}
+
 io.on('connection', (socket) => {
   function emitParticipants() {
     const teams = Object.values(connectedPlayers);
@@ -255,7 +277,7 @@ io.on('connection', (socket) => {
     const correct = answer === currentDisplay.correctLetter;
     const correctText = currentDisplay.options[currentDisplay.correctLetter];
 
-    answeredByTeam[key] = true;
+    answeredByTeam[key] = correct ? 'correct' : 'wrong';
     if (correct) {
       teamScores[team] = (teamScores[team] || 0) + 1;
       questionStats[questionIndex].correct++;
@@ -303,6 +325,24 @@ io.on('connection', (socket) => {
   socket.on('end-game', () => {
     gameEnded = true;
     emitGameState();
+  });
+
+  socket.on('reset-current-question', () => {
+    const participants = Object.keys(teamScores);
+    participants.forEach((name) => revokeAnswerForParticipant(name, currentQuestionIndex));
+    io.to('board').emit('scores-update', { correct: teamScores, wrong: teamWrongScores });
+    io.to('board').emit('stats-update', questionStats);
+    emitQuestionAnswered();
+  });
+
+  socket.on('reset-current-for-participant', (participantName) => {
+    const name = String(participantName || '').trim();
+    if (!name) return;
+    const changed = revokeAnswerForParticipant(name, currentQuestionIndex);
+    if (!changed) return;
+    io.to('board').emit('scores-update', { correct: teamScores, wrong: teamWrongScores });
+    io.to('board').emit('stats-update', questionStats);
+    emitQuestionAnswered();
   });
 
   socket.on('reset-game', () => {
