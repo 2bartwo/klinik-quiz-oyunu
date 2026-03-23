@@ -2,14 +2,23 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
+const cookieParser = require('cookie-parser');
 const questions = require('./data/questions.json');
 
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
+const TAHTA_USER = process.env.TAHTA_USER || 'admin';
+const TAHTA_PASS = process.env.TAHTA_PASS || 'admin123';
+const TAHTA_SECRET = process.env.TAHTA_SECRET || 'tahta-secret-' + Date.now();
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
+app.use(cookieParser());
+
+// Bağlı oyuncular: { socketId: teamName }
+const connectedPlayers = {};
 
 // Takım skorları: { "Takım 1": 5, "Takım 2": 3, ... }
 const teamScores = {};
@@ -30,9 +39,24 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Tahta/grafik sayfası
+// Tahta girişi
+app.post('/api/tahta-login', (req, res) => {
+  const { username, password } = req.body || {};
+  if (username === TAHTA_USER && password === TAHTA_PASS) {
+    res.cookie('tahta_auth', TAHTA_SECRET, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000, sameSite: 'lax' });
+    res.json({ success: true });
+  } else {
+    res.json({ success: false, message: 'Kullanıcı adı veya şifre hatalı.' });
+  }
+});
+
+// Tahta/grafik sayfası (giriş gerekli)
 app.get('/tahta', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'tahta.html'));
+  if (req.cookies?.tahta_auth === TAHTA_SECRET) {
+    res.sendFile(path.join(__dirname, 'public', 'tahta.html'));
+  } else {
+    res.sendFile(path.join(__dirname, 'public', 'tahta-login.html'));
+  }
 });
 
 // Sorular API
@@ -61,11 +85,19 @@ function emitGameState() {
 
 // Socket.io - gerçek zamanlı iletişim
 io.on('connection', (socket) => {
+  function emitParticipants() {
+    const teams = Object.values(connectedPlayers);
+    const data = { count: teams.length, teams };
+    io.to('board').emit('participants-update', data);
+    io.to('players').emit('participants-update', data);
+  }
+
   // Tahta bağlandığında mevcut skorları ve soruyu gönder
   socket.on('join-board', () => {
     socket.join('board');
     socket.emit('scores-update', { correct: teamScores, wrong: teamWrongScores });
     socket.emit('stats-update', questionStats);
+    socket.emit('participants-update', { count: Object.keys(connectedPlayers).length, teams: Object.values(connectedPlayers) });
     socket.emit('question-change', {
       index: currentQuestionIndex,
       question: questions[currentQuestionIndex],
@@ -84,7 +116,9 @@ io.on('connection', (socket) => {
       teamWrongScores[name] = 0;
     }
     socket.teamName = name;
+    connectedPlayers[socket.id] = name;
     socket.join('players');
+    emitParticipants();
     socket.emit('joined', {
       teamName: name,
       scores: teamScores,
@@ -204,6 +238,13 @@ io.on('connection', (socket) => {
       total: questions.length
     });
     emitGameState();
+  });
+
+  socket.on('disconnect', () => {
+    if (connectedPlayers[socket.id]) {
+      delete connectedPlayers[socket.id];
+      emitParticipants();
+    }
   });
 });
 

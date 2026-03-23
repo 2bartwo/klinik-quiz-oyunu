@@ -6,7 +6,7 @@
   <title>Quiz Tahtası - Canlı Skor Grafiği</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -14,10 +14,12 @@
   <div class="tahta">
     <header class="tahta-header">
       <h1>Klinik Eğitim Quiz - Canlı Skor Tahtası</h1>
-      <div class="qr-box">
-        <p>Oyuncular bu QR kodu okutarak katılır:</p>
-        <img id="qr-img" src="" alt="QR Kod" width="120" height="120">
-        <small id="game-url"></small>
+      <div class="tahta-top-bar">
+        <div class="participants-box">
+          <span class="participants-count">Katılımcılar: <strong id="participant-count">0</strong></span>
+          <ul id="participant-list" class="participant-list"></ul>
+        </div>
+        <button id="qr-btn" class="btn btn-small">📱 QR Kod Göster</button>
       </div>
       <div class="tahta-controls">
         <button id="start-btn" class="btn btn-start">▶ Oyunu Başlat</button>
@@ -54,6 +56,15 @@
           <tbody id="stats-table-body"></tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+  <div id="qr-modal" class="qr-modal">
+    <div class="qr-modal-content">
+      <button id="qr-close" class="qr-close">×</button>
+      <p>Oyuncular bu QR kodu okutarak katılır</p>
+      <img id="qr-img" src="" alt="QR Kod" width="280" height="280">
+      <small id="game-url"></small>
     </div>
   </div>
 

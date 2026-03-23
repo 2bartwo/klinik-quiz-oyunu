@@ -1,12 +1,23 @@
 const socket = io();
 
-// QR kod
+// QR kod - butona basınca büyük göster
 const gameUrl = window.location.origin;
-document.getElementById('qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(gameUrl)}`;
+const qrImg = document.getElementById('qr-img');
+qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=280x280&data=${encodeURIComponent(gameUrl)}`;
 document.getElementById('game-url').textContent = gameUrl;
+
+const qrModal = document.getElementById('qr-modal');
+const qrBtn = document.getElementById('qr-btn');
+const qrClose = document.getElementById('qr-close');
+
+qrBtn.addEventListener('click', () => qrModal.classList.add('open'));
+qrClose.addEventListener('click', () => qrModal.classList.remove('open'));
+qrModal.addEventListener('click', (e) => { if (e.target === qrModal) qrModal.classList.remove('open'); });
 
 const questionNumEl = document.getElementById('tahta-question-num');
 const questionTextEl = document.getElementById('tahta-question-text');
+const participantCountEl = document.getElementById('participant-count');
+const participantListEl = document.getElementById('participant-list');
 const startBtn = document.getElementById('start-btn');
 const endBtn = document.getElementById('end-btn');
 const prevBtn = document.getElementById('prev-btn');
@@ -19,6 +30,11 @@ let wrongChart = null;
 
 // Tahta olarak katıl
 socket.emit('join-board');
+
+socket.on('participants-update', (data) => {
+  participantCountEl.textContent = data.count;
+  participantListEl.innerHTML = (data.teams || []).map(t => `<li>${t}</li>`).join('');
+});
 
 socket.on('scores-update', (data) => {
   const correct = data.correct || data;

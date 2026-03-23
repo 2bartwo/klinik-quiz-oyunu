@@ -6,7 +6,7 @@
   <title>Klinik Quiz - Takım Girişi</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -14,13 +14,9 @@
     <!-- Adım 1: Takım girişi -->
     <div id="team-screen" class="screen active">
       <div class="card">
-        <div class="qr-hint">
-          <span class="qr-icon">📱</span>
-          <p>Bu sayfaya QR kodu okutarak ulaştınız</p>
-        </div>
         <h1>Klinik Eğitim Quiz Oyunu</h1>
         <p class="subtitle">Oyuna katılmak için takım adınızı girin</p>
-        <form id="team-form">
+        <form id="team-form" class="auth-form">
           <input type="text" id="team-input" placeholder="Örn: Takım 1, Kırmızı Takım..." maxlength="50" autocomplete="off">
           <button type="submit" class="btn btn-primary">Katıl</button>
         </form>
@@ -30,6 +26,7 @@
     <!-- Adım 2: Bekleme ekranı -->
     <div id="waiting-screen" class="screen">
       <div class="card">
+        <span id="waiting-participant-count" class="participant-badge participant-badge-waiting">0 katılımcı</span>
         <div class="waiting-spinner"></div>
         <h2>Oyun başlamak üzere</h2>
         <p>Lütfen bekleyin. Sunucu oyunu başlattığında sorular görünecektir.</p>
@@ -42,6 +39,7 @@
       <header class="game-header">
         <span id="team-badge"></span>
         <span id="question-counter">Soru 1/17</span>
+        <span id="game-participant-count" class="participant-badge">0 katılımcı</span>
       </header>
       <div class="question-card">
         <h2 id="question-text"></h2>

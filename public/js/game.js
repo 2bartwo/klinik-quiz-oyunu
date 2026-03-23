@@ -126,6 +126,14 @@ socket.on('result', (data) => {
   resultMessage.className = 'result-message show ' + (data.correct ? 'correct' : 'wrong');
 });
 
+socket.on('participants-update', (data) => {
+  const txt = data.count + ' katılımcı';
+  ['game-participant-count', 'waiting-participant-count'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = txt;
+  });
+});
+
 socket.on('error', (msg) => {
   alert(msg);
 });
