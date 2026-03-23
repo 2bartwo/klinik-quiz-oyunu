@@ -15,9 +15,9 @@
     <div id="team-screen" class="screen active">
       <div class="card">
         <h1>Klinik Eğitim Quiz Oyunu</h1>
-        <p class="subtitle">Oyuna katılmak için takım adınızı girin</p>
+        <p class="subtitle">Oyuna katılmak için katılımcı isminizi girin</p>
         <form id="team-form" class="auth-form">
-          <input type="text" id="team-input" placeholder="Örn: Takım 1, Kırmızı Takım..." maxlength="50" autocomplete="off">
+          <input type="text" id="team-input" placeholder="İsim girin" maxlength="50" autocomplete="off">
           <button type="submit" class="btn btn-primary">Katıl</button>
         </form>
       </div>
@@ -42,6 +42,7 @@
         <span id="game-participant-count" class="participant-badge">0 katılımcı</span>
       </header>
       <div class="question-card">
+        <div id="question-answered-info" class="question-answered-info">0/0 kişi soruyu çözdü</div>
         <h2 id="question-text"></h2>
         <div id="options" class="options"></div>
         <div id="result-message" class="result-message"></div>

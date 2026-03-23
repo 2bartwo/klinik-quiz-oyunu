@@ -9,8 +9,8 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
 
-const TAHTA_USER = process.env.TAHTA_USER || 'admin';
-const TAHTA_PASS = process.env.TAHTA_PASS || 'admin123';
+const TAHTA_USER = process.env.TAHTA_USER || 'bartwo';
+const TAHTA_PASS = process.env.TAHTA_PASS || 'bartwo143';
 const TAHTA_SECRET = process.env.TAHTA_SECRET || 'tahta-secret-' + Date.now();
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -26,8 +26,13 @@ const teamScores = {};
 const teamWrongScores = {};
 // Her soru için hangi takımlar cevap verdi (tekrar cevap vermesin)
 const answeredByTeam = {};
-// Soru bazlı istatistik: [{ correct: 3, wrong: 2 }, ...]
-const questionStats = questions.map(() => ({ correct: 0, wrong: 0 }));
+// Soru bazlı istatistik
+const questionStats = questions.map(() => ({
+  correct: 0, wrong: 0,
+  correctTeams: [], wrongTeams: [],
+  totalAtQuestion: 0,
+  teamsAtQuestion: []
+}));
 // Mevcut soru indeksi (0-16)
 let currentQuestionIndex = 0;
 // Oyun durumu
@@ -37,6 +42,12 @@ let gameEnded = false;
 // Ana sayfa - oyuncu girişi
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Tahta çıkış
+app.get('/api/tahta-logout', (req, res) => {
+  res.clearCookie('tahta_auth');
+  res.redirect('/tahta');
 });
 
 // Tahta girişi
@@ -88,16 +99,22 @@ io.on('connection', (socket) => {
   function emitParticipants() {
     const teams = Object.values(connectedPlayers);
     const data = { count: teams.length, teams };
+    const answeredCurrent = questionStats[currentQuestionIndex].correct + questionStats[currentQuestionIndex].wrong;
     io.to('board').emit('participants-update', data);
     io.to('players').emit('participants-update', data);
+    io.to('board').emit('question-answered', { answered: answeredCurrent, total: teams.length });
+    io.to('players').emit('question-answered', { answered: answeredCurrent, total: teams.length });
   }
 
   // Tahta bağlandığında mevcut skorları ve soruyu gönder
   socket.on('join-board', () => {
     socket.join('board');
+    const totalPlayers = Object.keys(connectedPlayers).length;
+    const answeredCurrent = questionStats[currentQuestionIndex].correct + questionStats[currentQuestionIndex].wrong;
     socket.emit('scores-update', { correct: teamScores, wrong: teamWrongScores });
     socket.emit('stats-update', questionStats);
-    socket.emit('participants-update', { count: Object.keys(connectedPlayers).length, teams: Object.values(connectedPlayers) });
+    socket.emit('participants-update', { count: totalPlayers, teams: Object.values(connectedPlayers) });
+    socket.emit('question-answered', { answered: answeredCurrent, total: totalPlayers });
     socket.emit('question-change', {
       index: currentQuestionIndex,
       question: questions[currentQuestionIndex],
@@ -119,6 +136,8 @@ io.on('connection', (socket) => {
     connectedPlayers[socket.id] = name;
     socket.join('players');
     emitParticipants();
+    const totalPlayers = Object.keys(connectedPlayers).length;
+    const answeredCurrent = questionStats[currentQuestionIndex].correct + questionStats[currentQuestionIndex].wrong;
     socket.emit('joined', {
       teamName: name,
       scores: teamScores,
@@ -128,7 +147,8 @@ io.on('connection', (socket) => {
         total: questions.length
       },
       gameStarted,
-      gameEnded
+      gameEnded,
+      questionAnswered: { answered: answeredCurrent, total: totalPlayers }
     });
   });
 
@@ -155,13 +175,20 @@ io.on('connection', (socket) => {
     if (correct) {
       teamScores[team] = (teamScores[team] || 0) + 1;
       questionStats[questionIndex].correct++;
+      questionStats[questionIndex].correctTeams.push(team);
     } else {
       teamWrongScores[team] = (teamWrongScores[team] || 0) + 1;
       questionStats[questionIndex].wrong++;
+      questionStats[questionIndex].wrongTeams.push(team);
     }
+
+    const totalPlayers = Object.keys(connectedPlayers).length;
+    const answeredCurrent = questionStats[currentQuestionIndex].correct + questionStats[currentQuestionIndex].wrong;
 
     io.to('board').emit('scores-update', { correct: teamScores, wrong: teamWrongScores });
     io.to('board').emit('stats-update', questionStats);
+    io.to('board').emit('question-answered', { answered: answeredCurrent, total: totalPlayers });
+    io.to('players').emit('question-answered', { answered: answeredCurrent, total: totalPlayers });
 
     socket.emit('result', {
       correct,
@@ -171,8 +198,13 @@ io.on('connection', (socket) => {
 
   // Öğretmen: Sonraki soru
   socket.on('next-question', () => {
+    const qs = questionStats[currentQuestionIndex];
+    qs.totalAtQuestion = Object.keys(teamScores).length;
+    qs.teamsAtQuestion = Object.keys(teamScores);
     if (currentQuestionIndex < questions.length - 1) {
       currentQuestionIndex++;
+      const totalPlayers = Object.keys(connectedPlayers).length;
+      const answeredCurrent = questionStats[currentQuestionIndex].correct + questionStats[currentQuestionIndex].wrong;
       io.to('board').emit('question-change', {
         index: currentQuestionIndex,
         question: questions[currentQuestionIndex],
@@ -183,6 +215,8 @@ io.on('connection', (socket) => {
         question: questions[currentQuestionIndex],
         total: questions.length
       });
+      io.to('board').emit('question-answered', { answered: answeredCurrent, total: totalPlayers });
+      io.to('players').emit('question-answered', { answered: answeredCurrent, total: totalPlayers });
     }
   });
 
@@ -190,6 +224,8 @@ io.on('connection', (socket) => {
   socket.on('prev-question', () => {
     if (currentQuestionIndex > 0) {
       currentQuestionIndex--;
+      const totalPlayers = Object.keys(connectedPlayers).length;
+      const answeredCurrent = questionStats[currentQuestionIndex].correct + questionStats[currentQuestionIndex].wrong;
       io.to('board').emit('question-change', {
         index: currentQuestionIndex,
         question: questions[currentQuestionIndex],
@@ -200,6 +236,8 @@ io.on('connection', (socket) => {
         question: questions[currentQuestionIndex],
         total: questions.length
       });
+      io.to('board').emit('question-answered', { answered: answeredCurrent, total: totalPlayers });
+      io.to('players').emit('question-answered', { answered: answeredCurrent, total: totalPlayers });
     }
   });
 
@@ -221,7 +259,11 @@ io.on('connection', (socket) => {
     Object.keys(teamScores).forEach(k => delete teamScores[k]);
     Object.keys(teamWrongScores).forEach(k => delete teamWrongScores[k]);
     Object.keys(answeredByTeam).forEach(k => delete answeredByTeam[k]);
-    questionStats.forEach(s => { s.correct = 0; s.wrong = 0; });
+    questionStats.forEach(s => {
+      s.correct = 0; s.wrong = 0;
+      s.correctTeams = []; s.wrongTeams = [];
+      s.totalAtQuestion = 0; s.teamsAtQuestion = [];
+    });
     currentQuestionIndex = 0;
     gameStarted = false;
     gameEnded = false;
@@ -237,6 +279,8 @@ io.on('connection', (socket) => {
       question: questions[0],
       total: questions.length
     });
+    io.to('board').emit('question-answered', { answered: 0, total: 0 });
+    io.to('players').emit('question-answered', { answered: 0, total: 0 });
     emitGameState();
   });
 

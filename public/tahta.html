@@ -20,10 +20,12 @@
           <ul id="participant-list" class="participant-list"></ul>
         </div>
         <button id="qr-btn" class="btn btn-small">📱 QR Kod Göster</button>
+        <a href="/api/tahta-logout" class="btn btn-small btn-logout">Çıkış Yap</a>
       </div>
       <div class="tahta-controls">
         <button id="start-btn" class="btn btn-start">▶ Oyunu Başlat</button>
         <button id="end-btn" class="btn btn-end">⏹ Oyunu Bitir</button>
+        <button id="result-btn" class="btn btn-result">📊 Sonuç</button>
         <button id="prev-btn" class="btn btn-small">← Önceki</button>
         <span id="tahta-question-num">Soru 1/17</span>
         <button id="next-btn" class="btn btn-small">Sonraki →</button>
@@ -33,6 +35,10 @@
 
     <div class="tahta-content">
       <div class="current-question-box">
+        <div class="question-box-header">
+          <span id="tahta-question-num-box">Soru 1/17</span>
+          <span id="tahta-answered-count">0/0 kişi işaretledi</span>
+        </div>
         <h2 id="tahta-question-text"></h2>
       </div>
 
@@ -48,14 +54,30 @@
       </div>
 
       <div class="question-stats">
-        <h3>Soru Bazlı İstatistik (Doğru / Yanlış)</h3>
+        <h3>Soru Bazlı İstatistik (Doğru / Yanlış / Boş)</h3>
         <table>
           <thead>
-            <tr><th>Soru</th><th>Doğru</th><th>Yanlış</th></tr>
+            <tr><th>Soru</th><th>Doğru</th><th>Yanlış</th><th>Boş</th><th></th></tr>
           </thead>
           <tbody id="stats-table-body"></tbody>
         </table>
       </div>
+    </div>
+  </div>
+
+  <div id="detail-modal" class="modal">
+    <div class="modal-content">
+      <button class="modal-close">×</button>
+      <h3 id="detail-title">Soru Detayı</h3>
+      <div id="detail-body"></div>
+    </div>
+  </div>
+
+  <div id="result-modal" class="modal">
+    <div class="modal-content result-modal-content">
+      <button class="modal-close result-close">×</button>
+      <h3>Oyun Sonucu</h3>
+      <div id="result-body"></div>
     </div>
   </div>
 

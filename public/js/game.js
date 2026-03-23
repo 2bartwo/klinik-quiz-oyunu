@@ -35,6 +35,10 @@ socket.on('joined', (data) => {
   teamBadge.textContent = data.teamName;
   waitingTeamBadge.textContent = data.teamName + ' olarak katıldınız.';
   teamScreen.classList.remove('active');
+  if (data.questionAnswered) {
+    const el = document.getElementById('question-answered-info');
+    if (el) el.textContent = `${data.questionAnswered.answered}/${data.questionAnswered.total} kişi soruyu çözdü`;
+  }
 
   if (data.gameEnded) {
     showScreen(endScreen);
@@ -124,6 +128,11 @@ socket.on('result', (data) => {
 
   resultMessage.textContent = data.message;
   resultMessage.className = 'result-message show ' + (data.correct ? 'correct' : 'wrong');
+});
+
+socket.on('question-answered', (data) => {
+  const el = document.getElementById('question-answered-info');
+  if (el) el.textContent = `${data.answered || 0}/${data.total || 0} kişi soruyu çözdü`;
 });
 
 socket.on('participants-update', (data) => {
