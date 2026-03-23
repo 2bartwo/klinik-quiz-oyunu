@@ -12,7 +12,7 @@ npm start
 ## Kullanım
 
 1. **Tahtayı aç** (projektör/ekran için): http://localhost:3000/tahta
-   - Varsayılan giriş: **admin** / **admin123**
+   - Varsayılan giriş: **bartwo** / **bartwo143**
    - Kendi bilgileriniz için `TAHTA_USER` ve `TAHTA_PASS` ortam değişkenlerini ayarlayın
    - Bu sayfada QR kod görünür
    - Oyuncular bu QR kodu okutarak siteye girer

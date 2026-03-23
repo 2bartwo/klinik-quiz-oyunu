@@ -17,40 +17,110 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(cookieParser());
 
-// Bağlı oyuncular: { socketId: teamName }
 const connectedPlayers = {};
-
-// Takım skorları: { "Takım 1": 5, "Takım 2": 3, ... }
 const teamScores = {};
-// Yanlış sayıları: { "Takım 1": 2, ... }
 const teamWrongScores = {};
-// Her soru için hangi takımlar cevap verdi (tekrar cevap vermesin)
 const answeredByTeam = {};
-// Soru bazlı istatistik
 const questionStats = questions.map(() => ({
   correct: 0, wrong: 0,
   correctTeams: [], wrongTeams: [],
   totalAtQuestion: 0,
   teamsAtQuestion: []
 }));
-// Mevcut soru indeksi (0-16)
+
 let currentQuestionIndex = 0;
-// Oyun durumu
 let gameStarted = false;
 let gameEnded = false;
 
-// Ana sayfa - oyuncu girişi
+/** Mevcut sorunun ekranda gösterilen (karıştırılmış) hali — doğrulama için */
+let currentDisplay = null;
+
+const activityLog = [];
+const MAX_ACTIVITY = 200;
+
+function logActivity(type, participantName) {
+  activityLog.push({
+    time: new Date().toISOString(),
+    type,
+    name: participantName,
+    questionIndex: currentQuestionIndex,
+    questionNum: currentQuestionIndex + 1
+  });
+  if (activityLog.length > MAX_ACTIVITY) activityLog.shift();
+  io.to('board').emit('activity-log-update', activityLog.slice(-100));
+}
+
+/** Şıkları rastgele sıraya koy, doğru harfi yeniden hesapla */
+function buildDisplayForIndex(idx) {
+  const q = questions[idx];
+  const letters = ['A', 'B', 'C', 'D'];
+  const entries = letters.map((orig) => ({ orig, text: q.options[orig] })).filter((e) => e.text);
+  for (let i = entries.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [entries[i], entries[j]] = [entries[j], entries[i]];
+  }
+  const options = {};
+  let correctLetter = null;
+  entries.forEach((e, i) => {
+    const L = letters[i];
+    options[L] = e.text;
+    if (e.orig === q.correct) correctLetter = L;
+  });
+  currentDisplay = { index: idx, text: q.text, options, correctLetter };
+  return { text: q.text, options };
+}
+
+function getAnswerBreakdown() {
+  const uniq = [...new Set(Object.values(connectedPlayers))];
+  const answered = [];
+  const notAnswered = [];
+  uniq.forEach((name) => {
+    if (answeredByTeam[`${name}-${currentQuestionIndex}`]) answered.push(name);
+    else notAnswered.push(name);
+  });
+  return { answered, notAnswered };
+}
+
+function emitQuestionAnswered() {
+  const teams = Object.values(connectedPlayers);
+  const uniq = [...new Set(teams)];
+  const answeredCount = questionStats[currentQuestionIndex].correct + questionStats[currentQuestionIndex].wrong;
+  const breakdown = getAnswerBreakdown();
+  const payload = {
+    answered: answeredCount,
+    total: uniq.length,
+    answeredNames: breakdown.answered,
+    notAnsweredNames: breakdown.notAnswered
+  };
+  io.to('board').emit('question-answered', payload);
+  io.to('players').emit('question-answered', payload);
+}
+
+function broadcastCurrentQuestion() {
+  buildDisplayForIndex(currentQuestionIndex);
+  const question = { text: currentDisplay.text, options: currentDisplay.options };
+  io.to('board').emit('question-change', {
+    index: currentQuestionIndex,
+    question,
+    total: questions.length
+  });
+  io.to('players').emit('question-change', {
+    index: currentQuestionIndex,
+    question,
+    total: questions.length
+  });
+  emitQuestionAnswered();
+}
+
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Tahta çıkış
 app.get('/api/tahta-logout', (req, res) => {
   res.clearCookie('tahta_auth');
   res.redirect('/tahta');
 });
 
-// Tahta girişi
 app.post('/api/tahta-login', (req, res) => {
   const { username, password } = req.body || {};
   if (username === TAHTA_USER && password === TAHTA_PASS) {
@@ -61,7 +131,6 @@ app.post('/api/tahta-login', (req, res) => {
   }
 });
 
-// Tahta/grafik sayfası (giriş gerekli)
 app.get('/tahta', (req, res) => {
   if (req.cookies?.tahta_auth === TAHTA_SECRET) {
     res.sendFile(path.join(__dirname, 'public', 'tahta.html'));
@@ -70,21 +139,21 @@ app.get('/tahta', (req, res) => {
   }
 });
 
-// Sorular API
 app.get('/api/questions', (req, res) => {
   res.json(questions);
 });
 
-// Mevcut soru
 app.get('/api/current-question', (req, res) => {
+  if (!currentDisplay || currentDisplay.index !== currentQuestionIndex) {
+    buildDisplayForIndex(currentQuestionIndex);
+  }
   res.json({
     index: currentQuestionIndex,
-    question: questions[currentQuestionIndex],
+    question: { text: currentDisplay.text, options: currentDisplay.options },
     total: questions.length
   });
 });
 
-// Oyun durumu
 app.get('/api/game-state', (req, res) => {
   res.json({ gameStarted, gameEnded });
 });
@@ -94,36 +163,37 @@ function emitGameState() {
   io.to('players').emit('game-state', { gameStarted, gameEnded });
 }
 
-// Socket.io - gerçek zamanlı iletişim
 io.on('connection', (socket) => {
   function emitParticipants() {
     const teams = Object.values(connectedPlayers);
-    const data = { count: teams.length, teams };
-    const answeredCurrent = questionStats[currentQuestionIndex].correct + questionStats[currentQuestionIndex].wrong;
+    const uniq = [...new Set(teams)];
+    const data = { count: uniq.length, teams: uniq };
     io.to('board').emit('participants-update', data);
     io.to('players').emit('participants-update', data);
-    io.to('board').emit('question-answered', { answered: answeredCurrent, total: teams.length });
-    io.to('players').emit('question-answered', { answered: answeredCurrent, total: teams.length });
+    emitQuestionAnswered();
   }
 
-  // Tahta bağlandığında mevcut skorları ve soruyu gönder
   socket.on('join-board', () => {
     socket.join('board');
-    const totalPlayers = Object.keys(connectedPlayers).length;
-    const answeredCurrent = questionStats[currentQuestionIndex].correct + questionStats[currentQuestionIndex].wrong;
+    const uniq = [...new Set(Object.values(connectedPlayers))];
+    const totalPlayers = uniq.length;
+    if (!currentDisplay || currentDisplay.index !== currentQuestionIndex) {
+      buildDisplayForIndex(currentQuestionIndex);
+    }
+    const question = { text: currentDisplay.text, options: currentDisplay.options };
     socket.emit('scores-update', { correct: teamScores, wrong: teamWrongScores });
     socket.emit('stats-update', questionStats);
-    socket.emit('participants-update', { count: totalPlayers, teams: Object.values(connectedPlayers) });
-    socket.emit('question-answered', { answered: answeredCurrent, total: totalPlayers });
+    socket.emit('participants-update', { count: totalPlayers, teams: uniq });
+    socket.emit('activity-log-update', activityLog.slice(-100));
     socket.emit('question-change', {
       index: currentQuestionIndex,
-      question: questions[currentQuestionIndex],
+      question,
       total: questions.length
     });
+    emitQuestionAnswered();
     socket.emit('game-state', { gameStarted, gameEnded });
   });
 
-  // Oyuncu takım adıyla katıldı
   socket.on('join-team', (teamName) => {
     if (!teamName || typeof teamName !== 'string') return;
     const name = teamName.trim().slice(0, 50);
@@ -135,24 +205,34 @@ io.on('connection', (socket) => {
     socket.teamName = name;
     connectedPlayers[socket.id] = name;
     socket.join('players');
+    logActivity('join', name);
     emitParticipants();
-    const totalPlayers = Object.keys(connectedPlayers).length;
+    const totalPlayers = [...new Set(Object.values(connectedPlayers))].length;
     const answeredCurrent = questionStats[currentQuestionIndex].correct + questionStats[currentQuestionIndex].wrong;
+    const breakdown = getAnswerBreakdown();
+    if (!currentDisplay || currentDisplay.index !== currentQuestionIndex) {
+      buildDisplayForIndex(currentQuestionIndex);
+    }
+    const question = { text: currentDisplay.text, options: currentDisplay.options };
     socket.emit('joined', {
       teamName: name,
       scores: teamScores,
       currentQuestion: {
         index: currentQuestionIndex,
-        question: questions[currentQuestionIndex],
+        question,
         total: questions.length
       },
       gameStarted,
       gameEnded,
-      questionAnswered: { answered: answeredCurrent, total: totalPlayers }
+      questionAnswered: {
+        answered: answeredCurrent,
+        total: totalPlayers,
+        answeredNames: breakdown.answered,
+        notAnsweredNames: breakdown.notAnswered
+      }
     });
   });
 
-  // Cevap gönder
   socket.on('submit-answer', (data) => {
     if (!gameStarted || gameEnded) return socket.emit('error', 'Oyun henüz başlamadı veya bitti.');
     const { answer, questionIndex } = data;
@@ -163,13 +243,17 @@ io.on('connection', (socket) => {
       return socket.emit('result', { correct: false, message: 'Bu soru artık geçerli değil.' });
     }
 
+    if (!currentDisplay || currentDisplay.index !== currentQuestionIndex) {
+      return socket.emit('error', 'Soru yüklenemedi.');
+    }
+
     const key = `${team}-${questionIndex}`;
     if (answeredByTeam[key]) {
       return socket.emit('result', { correct: false, message: 'Bu soruyu zaten cevapladınız.' });
     }
 
-    const question = questions[questionIndex];
-    const correct = question && answer === question.correct;
+    const correct = answer === currentDisplay.correctLetter;
+    const correctText = currentDisplay.options[currentDisplay.correctLetter];
 
     answeredByTeam[key] = true;
     if (correct) {
@@ -182,84 +266,50 @@ io.on('connection', (socket) => {
       questionStats[questionIndex].wrongTeams.push(team);
     }
 
-    const totalPlayers = Object.keys(connectedPlayers).length;
-    const answeredCurrent = questionStats[currentQuestionIndex].correct + questionStats[currentQuestionIndex].wrong;
-
     io.to('board').emit('scores-update', { correct: teamScores, wrong: teamWrongScores });
     io.to('board').emit('stats-update', questionStats);
-    io.to('board').emit('question-answered', { answered: answeredCurrent, total: totalPlayers });
-    io.to('players').emit('question-answered', { answered: answeredCurrent, total: totalPlayers });
+    emitQuestionAnswered();
 
     socket.emit('result', {
       correct,
-      message: correct ? 'Doğru!' : 'Yanlış. Doğru cevap: ' + (question?.options?.[question.correct] || question?.correct)
+      correctLetter: currentDisplay.correctLetter,
+      message: correct ? 'Doğru!' : 'Yanlış. Doğru cevap: ' + correctText
     });
   });
 
-  // Öğretmen: Sonraki soru
   socket.on('next-question', () => {
     const qs = questionStats[currentQuestionIndex];
     qs.totalAtQuestion = Object.keys(teamScores).length;
     qs.teamsAtQuestion = Object.keys(teamScores);
     if (currentQuestionIndex < questions.length - 1) {
       currentQuestionIndex++;
-      const totalPlayers = Object.keys(connectedPlayers).length;
-      const answeredCurrent = questionStats[currentQuestionIndex].correct + questionStats[currentQuestionIndex].wrong;
-      io.to('board').emit('question-change', {
-        index: currentQuestionIndex,
-        question: questions[currentQuestionIndex],
-        total: questions.length
-      });
-      io.to('players').emit('question-change', {
-        index: currentQuestionIndex,
-        question: questions[currentQuestionIndex],
-        total: questions.length
-      });
-      io.to('board').emit('question-answered', { answered: answeredCurrent, total: totalPlayers });
-      io.to('players').emit('question-answered', { answered: answeredCurrent, total: totalPlayers });
+      broadcastCurrentQuestion();
     }
   });
 
-  // Öğretmen: Önceki soru
   socket.on('prev-question', () => {
     if (currentQuestionIndex > 0) {
       currentQuestionIndex--;
-      const totalPlayers = Object.keys(connectedPlayers).length;
-      const answeredCurrent = questionStats[currentQuestionIndex].correct + questionStats[currentQuestionIndex].wrong;
-      io.to('board').emit('question-change', {
-        index: currentQuestionIndex,
-        question: questions[currentQuestionIndex],
-        total: questions.length
-      });
-      io.to('players').emit('question-change', {
-        index: currentQuestionIndex,
-        question: questions[currentQuestionIndex],
-        total: questions.length
-      });
-      io.to('board').emit('question-answered', { answered: answeredCurrent, total: totalPlayers });
-      io.to('players').emit('question-answered', { answered: answeredCurrent, total: totalPlayers });
+      broadcastCurrentQuestion();
     }
   });
 
-  // Öğretmen: Oyunu başlat
   socket.on('start-game', () => {
     gameStarted = true;
     gameEnded = false;
     emitGameState();
   });
 
-  // Öğretmen: Oyunu bitir
   socket.on('end-game', () => {
     gameEnded = true;
     emitGameState();
   });
 
-  // Öğretmen: Oyunu sıfırla
   socket.on('reset-game', () => {
-    Object.keys(teamScores).forEach(k => delete teamScores[k]);
-    Object.keys(teamWrongScores).forEach(k => delete teamWrongScores[k]);
-    Object.keys(answeredByTeam).forEach(k => delete answeredByTeam[k]);
-    questionStats.forEach(s => {
+    Object.keys(teamScores).forEach((k) => delete teamScores[k]);
+    Object.keys(teamWrongScores).forEach((k) => delete teamWrongScores[k]);
+    Object.keys(answeredByTeam).forEach((k) => delete answeredByTeam[k]);
+    questionStats.forEach((s) => {
       s.correct = 0; s.wrong = 0;
       s.correctTeams = []; s.wrongTeams = [];
       s.totalAtQuestion = 0; s.teamsAtQuestion = [];
@@ -267,26 +317,20 @@ io.on('connection', (socket) => {
     currentQuestionIndex = 0;
     gameStarted = false;
     gameEnded = false;
+    activityLog.length = 0;
+    currentDisplay = null;
     io.to('board').emit('scores-update', { correct: {}, wrong: {} });
     io.to('board').emit('stats-update', questionStats);
-    io.to('board').emit('question-change', {
-      index: 0,
-      question: questions[0],
-      total: questions.length
-    });
-    io.to('players').emit('question-change', {
-      index: 0,
-      question: questions[0],
-      total: questions.length
-    });
-    io.to('board').emit('question-answered', { answered: 0, total: 0 });
-    io.to('players').emit('question-answered', { answered: 0, total: 0 });
+    io.to('board').emit('activity-log-update', []);
+    broadcastCurrentQuestion();
     emitGameState();
   });
 
   socket.on('disconnect', () => {
     if (connectedPlayers[socket.id]) {
+      const name = connectedPlayers[socket.id];
       delete connectedPlayers[socket.id];
+      logActivity('leave', name);
       emitParticipants();
     }
   });
@@ -296,6 +340,5 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`\n  Klinik Quiz Oyunu çalışıyor!\n`);
   console.log(`  Oyuncu girişi: http://localhost:${PORT}`);
-  console.log(`  Tahta/grafik:  http://localhost:${PORT}/tahta`);
-  console.log(`\n  QR kodu oluşturmak için: https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=http://YOUR_IP:${PORT}\n`);
+  console.log(`  Tahta/grafik:  http://localhost:${PORT}/tahta\n`);
 });

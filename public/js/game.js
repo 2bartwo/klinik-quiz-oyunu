@@ -37,7 +37,7 @@ socket.on('joined', (data) => {
   teamScreen.classList.remove('active');
   if (data.questionAnswered) {
     const el = document.getElementById('question-answered-info');
-    if (el) el.textContent = `${data.questionAnswered.answered}/${data.questionAnswered.total} kişi soruyu çözdü`;
+    if (el) el.textContent = `${data.questionAnswered.answered}/${data.questionAnswered.total} katılımcı soruyu çözdü`;
   }
 
   if (data.gameEnded) {
@@ -122,7 +122,7 @@ function selectOption(btn) {
 socket.on('result', (data) => {
   const options = optionsEl.querySelectorAll('.option');
   options.forEach(o => {
-    if (o.dataset.letter === currentQuestion?.correct) o.classList.add('correct');
+    if (data.correctLetter && o.dataset.letter === data.correctLetter) o.classList.add('correct');
     else if (o.classList.contains('selected') && !data.correct) o.classList.add('wrong');
   });
 
@@ -132,7 +132,7 @@ socket.on('result', (data) => {
 
 socket.on('question-answered', (data) => {
   const el = document.getElementById('question-answered-info');
-  if (el) el.textContent = `${data.answered || 0}/${data.total || 0} kişi soruyu çözdü`;
+  if (el) el.textContent = `${data.answered || 0}/${data.total || 0} katılımcı soruyu çözdü`;
 });
 
 socket.on('participants-update', (data) => {
