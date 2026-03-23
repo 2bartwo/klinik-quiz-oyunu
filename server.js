@@ -185,6 +185,31 @@ function revokeAnswerForParticipant(participantName, questionIndex) {
   return true;
 }
 
+/** Prompt’taki isim ile answeredByTeam anahtarındaki isim farklı olabildiği için (büyük/küçük harf) eşleştirir */
+function findAnsweredParticipantName(input, questionIndex) {
+  const t = String(input || '').trim().toLowerCase();
+  if (!t) return null;
+  const suffix = `-${questionIndex}`;
+  for (const key of Object.keys(answeredByTeam)) {
+    if (!key.endsWith(suffix)) continue;
+    const name = key.slice(0, -suffix.length);
+    if (name.trim().toLowerCase() === t) return name;
+  }
+  return null;
+}
+
+/** Katılımcı sıfırlandığında / soru sıfırlandığında oyuncu tarayıcısında şıkları yeniden açmak için */
+function emitAnswerRevokedToSocketsForName(participantName) {
+  const t = String(participantName || '').trim().toLowerCase();
+  if (!t) return;
+  const payload = { questionIndex: currentQuestionIndex };
+  for (const [sid, pname] of Object.entries(connectedPlayers)) {
+    if (String(pname).trim().toLowerCase() === t) {
+      io.to(sid).emit('answer-revoked', payload);
+    }
+  }
+}
+
 io.on('connection', (socket) => {
   function emitParticipants() {
     const teams = Object.values(connectedPlayers);
@@ -328,21 +353,28 @@ io.on('connection', (socket) => {
   });
 
   socket.on('reset-current-question', () => {
-    const participants = Object.keys(teamScores);
-    participants.forEach((name) => revokeAnswerForParticipant(name, currentQuestionIndex));
+    const suffix = `-${currentQuestionIndex}`;
+    Object.keys(answeredByTeam)
+      .filter((key) => key.endsWith(suffix))
+      .forEach((key) => {
+        const name = key.slice(0, -suffix.length);
+        revokeAnswerForParticipant(name, currentQuestionIndex);
+      });
     io.to('board').emit('scores-update', { correct: teamScores, wrong: teamWrongScores });
     io.to('board').emit('stats-update', questionStats);
     emitQuestionAnswered();
+    io.to('players').emit('answer-revoked', { questionIndex: currentQuestionIndex });
   });
 
   socket.on('reset-current-for-participant', (participantName) => {
-    const name = String(participantName || '').trim();
-    if (!name) return;
-    const changed = revokeAnswerForParticipant(name, currentQuestionIndex);
+    const canonical = findAnsweredParticipantName(participantName, currentQuestionIndex);
+    if (!canonical) return;
+    const changed = revokeAnswerForParticipant(canonical, currentQuestionIndex);
     if (!changed) return;
     io.to('board').emit('scores-update', { correct: teamScores, wrong: teamWrongScores });
     io.to('board').emit('stats-update', questionStats);
     emitQuestionAnswered();
+    emitAnswerRevokedToSocketsForName(canonical);
   });
 
   socket.on('reset-game', () => {

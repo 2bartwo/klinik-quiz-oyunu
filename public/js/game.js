@@ -130,6 +130,22 @@ socket.on('result', (data) => {
   resultMessage.className = 'result-message show ' + (data.correct ? 'correct' : 'wrong');
 });
 
+/** Tahta katılımcı/soru sıfırlayınca şıklar tekrar seçilebilir olsun */
+function reopenQuestionAfterRevoke() {
+  resultMessage.textContent = '';
+  resultMessage.classList.remove('show', 'correct', 'wrong');
+  optionsEl.querySelectorAll('.option').forEach((o) => {
+    o.disabled = false;
+    o.classList.remove('selected', 'correct', 'wrong');
+  });
+}
+
+socket.on('answer-revoked', (data) => {
+  if (!data || data.questionIndex !== currentIndex) return;
+  if (!gameScreen.classList.contains('active')) return;
+  reopenQuestionAfterRevoke();
+});
+
 socket.on('question-answered', (data) => {
   const el = document.getElementById('question-answered-info');
   if (el) el.textContent = `${data.answered || 0}/${data.total || 0} katılımcı soruyu çözdü`;
