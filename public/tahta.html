@@ -15,13 +15,12 @@
     <header class="tahta-header">
       <h1>Klinik Eğitim Quiz - Canlı Skor Tahtası</h1>
       <div class="tahta-top-bar">
-        <div class="participants-box">
-          <span class="participants-count">Katılımcılar: <strong id="participant-count">0</strong></span>
-          <ul id="participant-list" class="participant-list"></ul>
+        <div class="tahta-top-actions">
+          <button type="button" id="participants-btn" class="btn btn-small btn-participants">Katılımcılar (0)</button>
+          <button id="qr-btn" class="btn btn-small">QR Kod Göster</button>
+          <button id="activity-btn" class="btn btn-small">Katılım Geçmişi</button>
+          <a href="/api/tahta-logout" class="btn btn-small btn-logout">Çıkış Yap</a>
         </div>
-        <button id="qr-btn" class="btn btn-small">QR Kod Göster</button>
-        <button id="activity-btn" class="btn btn-small">Katılım Geçmişi</button>
-        <a href="/api/tahta-logout" class="btn btn-small btn-logout">Çıkış Yap</a>
       </div>
       <div class="tahta-controls">
         <button id="start-btn" class="btn btn-start">Oyunu Başlat</button>
@@ -94,6 +93,15 @@
     </div>
   </div>
 
+  <div id="participants-modal" class="modal">
+    <div class="modal-content participants-modal-content">
+      <button type="button" class="modal-close">×</button>
+      <h3>Katılımcılar</h3>
+      <p class="modal-hint">Şu an bağlı olan katılımcılar (<strong id="participant-count">0</strong> kişi)</p>
+      <ul id="participant-list" class="participant-list participant-list-modal"></ul>
+    </div>
+  </div>
+
   <div id="activity-modal" class="modal">
     <div class="modal-content">
       <button type="button" class="modal-close activity-close">×</button>
@@ -111,6 +119,8 @@
       <small id="game-url"></small>
     </div>
   </div>
+
+  <div id="toast-stack" class="toast-stack" aria-live="polite"></div>
 
   <script src="/socket.io/socket.io.js"></script>
   <script src="js/tahta.js"></script>

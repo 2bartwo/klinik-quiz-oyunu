@@ -22,9 +22,18 @@ const answerBreakdownBtn = document.getElementById('answer-breakdown-btn');
 const resetQuestionBtn = document.getElementById('reset-question-btn');
 const resetParticipantBtn = document.getElementById('reset-participant-btn');
 const activityBtn = document.getElementById('activity-btn');
+const participantsBtn = document.getElementById('participants-btn');
+const participantsModal = document.getElementById('participants-modal');
 const participantCountEl = document.getElementById('participant-count');
 const participantListEl = document.getElementById('participant-list');
+const toastStack = document.getElementById('toast-stack');
 const startBtn = document.getElementById('start-btn');
+
+function escapeHtml(s) {
+  const div = document.createElement('div');
+  div.textContent = s;
+  return div.innerHTML;
+}
 const endBtn = document.getElementById('end-btn');
 const resultBtn = document.getElementById('result-btn');
 const prevBtn = document.getElementById('prev-btn');
@@ -45,16 +54,48 @@ let scoreChart = null;
 let wrongChart = null;
 let lastParticipantCount = 0;
 let lastTeams = [];
+/** İlk participants-update’te toast göstermemek için; sonraki güncellemelerde yeni isimleri yakala */
+let previousParticipantNames = null;
 
 function closeAllModals() {
   detailModal.classList.remove('open');
   resultModal.classList.remove('open');
   breakdownModal.classList.remove('open');
   activityModal.classList.remove('open');
+  participantsModal.classList.remove('open');
 }
 
+function showJoinToast(name) {
+  if (!toastStack || !name) return;
+  const el = document.createElement('div');
+  el.className = 'tahta-toast';
+  el.textContent = `${name} oyuna katıldı`;
+  toastStack.appendChild(el);
+  requestAnimationFrame(() => el.classList.add('show'));
+  const hideAfter = 4000;
+  setTimeout(() => {
+    el.classList.remove('show');
+    el.classList.add('hide');
+    setTimeout(() => el.remove(), 280);
+  }, hideAfter);
+}
+
+participantsBtn.addEventListener('click', () => {
+  participantsModal.classList.add('open');
+});
+participantsModal.addEventListener('click', (e) => {
+  if (e.target === participantsModal) participantsModal.classList.remove('open');
+});
+
 document.querySelectorAll('.modal-close, .result-close').forEach(btn => {
-  btn.addEventListener('click', closeAllModals);
+  btn.addEventListener('click', (e) => {
+    const modal = btn.closest('.modal');
+    if (modal === participantsModal) {
+      participantsModal.classList.remove('open');
+      return;
+    }
+    closeAllModals();
+  });
 });
 detailModal.addEventListener('click', (e) => { if (e.target === detailModal) detailModal.classList.remove('open'); });
 resultModal.addEventListener('click', (e) => { if (e.target === resultModal) resultModal.classList.remove('open'); });
@@ -64,10 +105,23 @@ activityModal.addEventListener('click', (e) => { if (e.target === activityModal)
 socket.emit('join-board');
 
 socket.on('participants-update', (data) => {
+  const teams = data.teams || [];
+
+  if (previousParticipantNames !== null) {
+    teams.forEach((t) => {
+      if (!previousParticipantNames.has(t)) showJoinToast(t);
+    });
+  }
+  previousParticipantNames = new Set(teams);
+
   lastParticipantCount = data.count || 0;
-  lastTeams = data.teams || [];
-  participantCountEl.textContent = data.count;
-  participantListEl.innerHTML = (data.teams || []).map(t => `<li>${t}</li>`).join('');
+  lastTeams = teams;
+  const n = typeof data.count === 'number' ? data.count : teams.length;
+  participantCountEl.textContent = n;
+  participantsBtn.textContent = `Katılımcılar (${n})`;
+  participantListEl.innerHTML = teams.length
+    ? teams.map((t) => `<li>${escapeHtml(t)}</li>`).join('')
+    : '<li class="empty">Henüz katılımcı yok</li>';
 });
 
 socket.on('question-answered', (data) => {
