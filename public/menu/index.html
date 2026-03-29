@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f0c0a">
+  <meta name="description" content="Ateşten Lezzetler — dijital menü. Mangal ve ocakta taze lezzetler.">
+  <title>Ateşten Lezzetler — Menü</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/menu.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="#top" class="brand-link" aria-label="Sayfa başı">
+      <svg class="brand-mark" width="44" height="44" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="ring" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#e85d04"/>
+            <stop offset="100%" stop-color="#d4a574"/>
+          </linearGradient>
+          <linearGradient id="fl1" x1="24" y1="8" x2="24" y2="36">
+            <stop stop-color="#ff8c42"/>
+            <stop offset="1" stop-color="#e85d04"/>
+          </linearGradient>
+          <linearGradient id="fl2" x1="24" y1="18" x2="24" y2="34">
+            <stop stop-color="#ffc078"/>
+            <stop offset="1" stop-color="#c2410c"/>
+          </linearGradient>
+        </defs>
+        <circle cx="24" cy="24" r="22" fill="#1a1512" stroke="url(#ring)" stroke-width="1.5"/>
+        <path d="M24 8c-2 6-6 10-6 16 0 5 3 9 6 12 3-3 6-7 6-12 0-6-4-10-6-16z" fill="url(#fl1)"/>
+        <path d="M18 22c-1.5 4-1 8 2 11 2-2 3.5-5 3.5-8.5 0-3.5-2-6.5-5.5-2.5z" fill="url(#fl2)" opacity="0.9"/>
+        <path d="M30 22c1.5 4 1 8-2 11-2-2-3.5-5-3.5-8.5 0-3.5 2-6.5 5.5-2.5z" fill="url(#fl2)" opacity="0.9"/>
+      </svg>
+      <span class="brand-wordmark">
+        <span class="brand-name">Ateşten Lezzetler</span>
+        <span class="brand-sub">Dijital menü</span>
+      </span>
+    </a>
+    <div class="header-actions">
+      <button type="button" class="btn-icon" id="open-qr" aria-label="QR kod ile menüyü paylaş" title="Menü QR kodu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="3" width="7" height="7"/>
+          <rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/>
+          <path d="M14 14h3v3h-3zM18 18h3v3h-3zM14 18h3v1M18 14v3"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <span class="hero-badge">Hoş geldiniz</span>
+    <h1 id="hero-title">Menümüzü keşfedin</h1>
+    <p id="hero-desc">Aşağıdan kategori seçebilir veya kaydırarak tüm lezzetlere göz atabilirsiniz.</p>
+  </section>
+
+  <div class="cat-nav-wrap">
+    <nav class="cat-nav" id="cat-nav" aria-label="Menü kategorileri"></nav>
+  </div>
+
+  <main class="menu-main" id="menu-root"></main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <h3 id="footer-brand">Ateşten Lezzetler</h3>
+      <div class="footer-block" id="footer-address"></div>
+      <div class="footer-block" id="footer-phone"></div>
+      <div class="footer-block" id="footer-hours"></div>
+      <p class="footer-note">Fiyatlar bilgilendirme amaçlıdır; sipariş ve alerjen bilgisi için lütfen personelimizle görüşün. Görseller temsilidir.</p>
+    </div>
+  </footer>
+
+  <div class="modal-backdrop" id="qr-modal" role="dialog" aria-modal="true" aria-labelledby="qr-title" hidden>
+    <div class="modal">
+      <h2 id="qr-title">Menüyü paylaş</h2>
+      <p>Bu QR kodu masanızdaki kartta kullanın; müşteriler telefonlarıyla doğrudan bu sayfaya gelir.</p>
+      <div class="qr-box" id="qr-canvas-wrap">
+        <canvas id="qr-canvas" width="200" height="200" aria-label="Menü bağlantısı QR kodu"></canvas>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn-primary" id="copy-link">Bağlantıyı kopyala</button>
+        <button type="button" class="btn-ghost" id="close-qr">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script src="js/menu-data.js"></script>
+  <script src="js/menu.js"></script>
+</body>
+</html>

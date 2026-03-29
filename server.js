@@ -13,6 +13,21 @@ const TAHTA_USER = process.env.TAHTA_USER || 'bartwo';
 const TAHTA_PASS = process.env.TAHTA_PASS || 'bartwo143';
 const TAHTA_SECRET = process.env.TAHTA_SECRET || 'tahta-secret-' + Date.now();
 
+/** Virgülle ayrılmış hostlar: bu adreslerle gelen / isteği /menu'ye yönlendirilir (örn. menu.bartwo.me). */
+const MENU_SUBDOMAIN_HOSTS = (process.env.MENU_SUBDOMAIN_HOSTS || 'menu.bartwo.me')
+  .split(',')
+  .map((h) => h.trim().toLowerCase())
+  .filter(Boolean);
+
+app.use((req, res, next) => {
+  const raw = req.get('host') || '';
+  const host = raw.split(':')[0].toLowerCase();
+  if (MENU_SUBDOMAIN_HOSTS.length && MENU_SUBDOMAIN_HOSTS.includes(host) && req.path === '/') {
+    return res.redirect(302, '/menu');
+  }
+  next();
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(cookieParser());
@@ -114,6 +129,10 @@ function broadcastCurrentQuestion() {
 
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/menu', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'menu', 'index.html'));
 });
 
 app.get('/api/tahta-logout', (req, res) => {
@@ -412,5 +431,6 @@ const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`\n  Klinik Quiz Oyunu çalışıyor!\n`);
   console.log(`  Oyuncu girişi: http://localhost:${PORT}`);
-  console.log(`  Tahta/grafik:  http://localhost:${PORT}/tahta\n`);
+  console.log(`  Tahta/grafik:  http://localhost:${PORT}/tahta`);
+  console.log(`  Restoran menü: http://localhost:${PORT}/menu\n`);
 });

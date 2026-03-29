@@ -76,6 +76,52 @@ bartwo.me'yi nereden yönetiyorsun? (GoDaddy, Namecheap, Cloudflare, Hostinger v
 - **Oyuncu girişi:** https://quiz.bartwo.me
 - **Tahta:** https://quiz.bartwo.me/tahta
 
+## 4. Restoran menüsü (Ateşten Lezzetler) — bartwo.me
+
+Menü aynı Railway servisinde; ekstra sunucu gerekmez. İki kullanım şekli var.
+
+### Seçenek A — Mevcut quiz adresinin altında (en hızlısı)
+
+Deploy ettiğiniz Railway URL’si veya özel alan adınız ne ise, menü yolu:
+
+- **Menü:** `https://quiz.bartwo.me/menu`  
+  (Railway’de henüz özel alan yoksa: `https://SIZIN-PROJE.up.railway.app/menu`)
+
+QR kodda ve masadaki kartta bu tam adresi kullanın. Menü sayfasındaki “QR” butonu da yayında bu URL’yi üretir.
+
+### Seçenek B — Sadece menü için alt alan: `menu.bartwo.me` (önerilen)
+
+Müşteriler `menu.bartwo.me` yazınca doğrudan menüye gitsin; quiz kökü karışmasın.
+
+**Railway**
+
+1. Aynı servisi seçin → **Settings** → **Networking** / **Public Networking**
+2. **Custom Domain** → **`menu.bartwo.me`** ekleyin
+3. Size verilen hedefi not edin (genelde `xxxx.up.railway.app` CNAME)
+
+**DNS (bartwo.me)**
+
+| Tip   | Name/Host | Value                         |
+|-------|-----------|-------------------------------|
+| CNAME | menu      | Railway’in verdiği adres      |
+
+Projede varsayılan olarak `menu.bartwo.me` kökü (`/`) otomatik **`/menu`** sayfasına yönlendirilir. Başka bir alt alan adı kullanacaksanız Railway’de **Variables** ekleyin:
+
+| Name | Value |
+|------|--------|
+| `MENU_SUBDOMAIN_HOSTS` | `menu.bartwo.me` veya birden fazlaysa virgülle: `menu.bartwo.me,menu2.bartwo.me` |
+
+Boş bırakmak için değişkeni silin veya kullanmayın; yönlendirme sadece bu hostlar için çalışır.
+
+**Özet adresler**
+
+- Quiz: `https://quiz.bartwo.me` (ve `/tahta`)
+- Menü: `https://menu.bartwo.me` → `/menu` veya doğrudan `https://quiz.bartwo.me/menu`
+
+### GitHub Pages (bartwo.me kökü) ile karışıklık
+
+`bartwo.me` kökünü GitHub Pages’e bağladıysanız, **aynı kökü** aynı anda Railway’e veremezsiniz. Menü için ya **`menu.bartwo.me`** gibi bir alt alan (CNAME → Railway) kullanın ya da menüyü sadece **`quiz.bartwo.me/menu`** üzerinden yayınlayın.
+
 ## Alternatif: Render (Ücretsiz)
 
 1. https://render.com → GitHub ile giriş
@@ -89,4 +135,5 @@ bartwo.me'yi nereden yönetiyorsun? (GoDaddy, Namecheap, Cloudflare, Hostinger v
 
 - **Oyuncu girişi:** https://quiz.bartwo.me
 - **Tahta:** https://quiz.bartwo.me/tahta
-- QR kod tahta sayfasında otomatik olarak quiz.bartwo.me adresini gösterecek.
+- **Restoran menüsü:** https://quiz.bartwo.me/menu veya (ayarladıysanız) https://menu.bartwo.me
+- QR kod tahta sayfasında otomatik olarak quiz.bartwo.me adresini gösterecek; menü QR’ı için menü sayfasındaki kodu veya `menu.bartwo.me` kullanın.
