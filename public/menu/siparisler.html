@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0f0c0a">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Sipariş takibi — Ateşten Lezzetler</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/menu/css/menu.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="/menu" class="brand-link" aria-label="Menüye dön">
+      <span class="brand-wordmark">
+        <span class="brand-name">Ateşten Lezzetler</span>
+        <span class="brand-sub">Sipariş takibi</span>
+      </span>
+    </a>
+    <div class="header-actions">
+      <a href="/menu" class="btn-icon" aria-label="Menü sayfası" title="Menü" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;width:2.65rem;height:2.65rem;border:1px solid var(--border);border-radius:12px;background:var(--bg-elevated);color:var(--gold);font-size:0.75rem;font-weight:600">Menü</a>
+    </div>
+  </header>
+
+  <main class="admin-page">
+    <h1>Gelen siparişler</h1>
+    <p class="admin-lead">Masa numarası, ürün adedi, zaman ve tutar. Yenile ile güncelleyin; otomatik yenileme açıkken her 20 saniyede bir çekilir.</p>
+
+    <div class="admin-toolbar">
+      <input type="password" id="admin-key" autocomplete="off" placeholder="Güvenlik anahtarı (varsa)" aria-label="MENU_ORDERS_KEY">
+      <button type="button" class="btn-primary" id="btn-save-key">Anahtarı kaydet</button>
+      <button type="button" class="btn-ghost" id="btn-refresh" style="width:auto;border-radius:12px;padding:0.55rem 1rem">Yenile</button>
+      <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.85rem;color:var(--cream-muted);cursor:pointer">
+        <input type="checkbox" id="auto-refresh" checked>
+        Otomatik (20 sn)
+      </label>
+    </div>
+
+    <p id="admin-msg" class="cart-msg" role="status"></p>
+    <div id="orders-root"></div>
+  </main>
+
+  <script src="/menu/js/siparisler.js"></script>
+</body>
+</html>

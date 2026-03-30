@@ -636,3 +636,363 @@ img {
   white-space: nowrap;
   border: 0;
 }
+
+/* Personel linki */
+.footer-staff {
+  margin: 1rem 0 0;
+  font-size: 0.85rem;
+}
+
+.footer-staff a {
+  color: var(--gold-dim);
+}
+
+.footer-staff a:hover {
+  color: var(--ember-glow);
+}
+
+/* Sepet çubuğu */
+body.has-cart-pad {
+  padding-bottom: calc(4.5rem + var(--safe-bottom));
+}
+
+.cart-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 85;
+  padding: 0.65rem 1rem calc(0.65rem + var(--safe-bottom));
+  background: linear-gradient(0deg, rgba(15, 12, 10, 0.98) 0%, rgba(15, 12, 10, 0.92) 100%);
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+}
+
+.cart-bar-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.cart-bar-text {
+  font-size: 0.88rem;
+  color: var(--cream-muted);
+  flex: 1;
+  min-width: 0;
+}
+
+.btn-cart-open {
+  flex-shrink: 0;
+  padding: 0.55rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, var(--ember) 0%, #c2410c 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-cart-open:hover {
+  filter: brightness(1.06);
+}
+
+/* Adet seçici (kart) */
+.dish-qty-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.45rem;
+}
+
+.dish-qty-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gold-dim);
+}
+
+.qty-stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--bg-elevated);
+}
+
+.qty-stepper button {
+  width: 2.1rem;
+  height: 2.1rem;
+  border: none;
+  background: transparent;
+  color: var(--cream);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.qty-stepper button:hover {
+  background: rgba(232, 93, 4, 0.15);
+}
+
+.qty-stepper button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.qty-stepper .qty-num {
+  min-width: 1.75rem;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--cream);
+}
+
+/* Sepet modal */
+.modal-backdrop--cart {
+  z-index: 205;
+}
+
+.modal--cart {
+  max-width: 440px;
+  text-align: left;
+}
+
+.modal--cart h2 {
+  text-align: left;
+}
+
+.cart-intro {
+  margin: 0 0 1rem;
+  font-size: 0.88rem;
+  color: var(--cream-muted);
+  text-align: left;
+}
+
+.cart-field {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.cart-field-label {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--gold-dim);
+  margin-bottom: 0.35rem;
+}
+
+.cart-field select,
+.cart-field textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--cream);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+}
+
+.cart-field textarea {
+  resize: vertical;
+  min-height: 3.5rem;
+}
+
+.cart-lines {
+  max-height: 40vh;
+  overflow-y: auto;
+  margin-bottom: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-card);
+}
+
+.cart-line {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem 0.75rem;
+  padding: 0.75rem 0.85rem;
+  border-bottom: 1px solid var(--border);
+  align-items: center;
+}
+
+.cart-line:last-child {
+  border-bottom: none;
+}
+
+.cart-line-name {
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--cream);
+}
+
+.cart-line-meta {
+  font-size: 0.8rem;
+  color: var(--cream-muted);
+}
+
+.cart-line .qty-stepper {
+  justify-self: end;
+}
+
+.cart-total {
+  margin: 0 0 0.75rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--gold);
+}
+
+.cart-msg {
+  min-height: 1.25rem;
+  margin: 0 0 0.75rem;
+  font-size: 0.85rem;
+  color: var(--ember-glow);
+}
+
+.cart-msg.is-error {
+  color: #f87171;
+}
+
+.cart-msg.is-ok {
+  color: #86efac;
+}
+
+/* Sipariş takip sayfası */
+.admin-page {
+  padding: calc(var(--header-h) + 1.25rem) 1rem 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.admin-page h1 {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  margin: 0 0 0.5rem;
+  color: var(--cream);
+}
+
+.admin-lead {
+  color: var(--cream-muted);
+  font-size: 0.92rem;
+  margin: 0 0 1.25rem;
+}
+
+.admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  align-items: center;
+}
+
+.admin-toolbar input[type='password'],
+.admin-toolbar input[type='text'] {
+  flex: 1;
+  min-width: 160px;
+  padding: 0.55rem 0.75rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--cream);
+  font-family: var(--font-body);
+}
+
+.admin-toolbar .btn-primary {
+  width: auto;
+  padding: 0.55rem 1rem;
+}
+
+.order-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.order-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.65rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.order-masa {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--ember-glow);
+}
+
+.order-time {
+  font-size: 0.85rem;
+  color: var(--cream-muted);
+}
+
+.order-id {
+  font-size: 0.72rem;
+  color: var(--gold-dim);
+  width: 100%;
+}
+
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.order-table th,
+.order-table td {
+  text-align: left;
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.order-table th {
+  color: var(--gold-dim);
+  font-weight: 600;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.order-table td.num {
+  text-align: right;
+}
+
+.order-note {
+  margin-top: 0.65rem;
+  font-size: 0.85rem;
+  color: var(--cream-muted);
+  font-style: italic;
+}
+
+.order-total-row {
+  margin-top: 0.5rem;
+  font-weight: 700;
+  color: var(--gold);
+  text-align: right;
+  font-size: 0.95rem;
+}
+
+.admin-empty {
+  color: var(--cream-muted);
+  text-align: center;
+  padding: 2rem 1rem;
+}

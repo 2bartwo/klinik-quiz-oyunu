@@ -1,3 +1,4 @@
+const fs = require('fs');
 const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
@@ -12,6 +13,23 @@ const io = new Server(server);
 const TAHTA_USER = process.env.TAHTA_USER || 'bartwo';
 const TAHTA_PASS = process.env.TAHTA_PASS || 'bartwo143';
 const TAHTA_SECRET = process.env.TAHTA_SECRET || 'tahta-secret-' + Date.now();
+const MENU_ORDERS_FILE = path.join(__dirname, 'data', 'menu-orders.json');
+const MENU_ORDERS_KEY = process.env.MENU_ORDERS_KEY || '';
+
+function loadMenuOrders() {
+  try {
+    const raw = fs.readFileSync(MENU_ORDERS_FILE, 'utf8');
+    const data = JSON.parse(raw);
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveMenuOrders(orders) {
+  fs.mkdirSync(path.dirname(MENU_ORDERS_FILE), { recursive: true });
+  fs.writeFileSync(MENU_ORDERS_FILE, JSON.stringify(orders, null, 2), 'utf8');
+}
 
 /** Virgülle ayrılmış hostlar: bu adreslerle gelen / isteği /menu'ye yönlendirilir (örn. menu.bartwo.me). */
 const MENU_SUBDOMAIN_HOSTS = (process.env.MENU_SUBDOMAIN_HOSTS || 'menu.bartwo.me')
@@ -133,6 +151,56 @@ app.get('/', (req, res) => {
 
 app.get('/menu', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'menu', 'index.html'));
+});
+
+app.get('/menu/siparisler', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'menu', 'siparisler.html'));
+});
+
+app.post('/api/menu-order', (req, res) => {
+  const body = req.body || {};
+  const table = parseInt(body.table, 10);
+  if (!Number.isFinite(table) || table < 1 || table > 99) {
+    return res.status(400).json({ ok: false, message: 'Geçerli bir masa numarası seçin (1–99).' });
+  }
+  const items = body.items;
+  if (!Array.isArray(items) || items.length === 0) {
+    return res.status(400).json({ ok: false, message: 'Sepetiniz boş.' });
+  }
+  const cleaned = [];
+  for (const it of items) {
+    const name = String(it.name || '').trim().slice(0, 120);
+    const qty = parseInt(it.qty ?? it.quantity, 10);
+    const price = Number(it.price);
+    if (!name || !Number.isFinite(qty) || qty < 1 || qty > 99 || !Number.isFinite(price) || price < 0) {
+      return res.status(400).json({ ok: false, message: 'Geçersiz ürün satırı.' });
+    }
+    cleaned.push({ name, qty, price: Math.round(price * 100) / 100 });
+  }
+  const note = String(body.note || '').trim().slice(0, 500);
+  const orders = loadMenuOrders();
+  const id = 'ord-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 9);
+  const order = {
+    id,
+    table,
+    items: cleaned,
+    createdAt: new Date().toISOString()
+  };
+  if (note) order.note = note;
+  orders.unshift(order);
+  if (orders.length > 500) orders.length = 500;
+  saveMenuOrders(orders);
+  res.json({ ok: true, orderId: id });
+});
+
+app.get('/api/menu-orders', (req, res) => {
+  if (MENU_ORDERS_KEY) {
+    const k = req.get('x-menu-orders-key') || req.query.key;
+    if (k !== MENU_ORDERS_KEY) {
+      return res.status(401).json({ ok: false, message: 'Yetkisiz erişim.' });
+    }
+  }
+  res.json({ ok: true, orders: loadMenuOrders() });
 });
 
 app.get('/api/tahta-logout', (req, res) => {
@@ -432,5 +500,6 @@ server.listen(PORT, () => {
   console.log(`\n  Klinik Quiz Oyunu çalışıyor!\n`);
   console.log(`  Oyuncu girişi: http://localhost:${PORT}`);
   console.log(`  Tahta/grafik:  http://localhost:${PORT}/tahta`);
-  console.log(`  Restoran menü: http://localhost:${PORT}/menu\n`);
+  console.log(`  Restoran menü: http://localhost:${PORT}/menu`);
+  console.log(`  Sipariş takip: http://localhost:${PORT}/menu/siparisler\n`);
 });

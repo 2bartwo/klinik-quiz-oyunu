@@ -70,8 +70,16 @@
       <div class="footer-block" id="footer-phone"></div>
       <div class="footer-block" id="footer-hours"></div>
       <p class="footer-note">Fiyatlar bilgilendirme amaçlıdır; sipariş ve alerjen bilgisi için lütfen personelimizle görüşün. Görseller temsilidir.</p>
+      <p class="footer-staff"><a href="/menu/siparisler">Personel: sipariş takibi</a></p>
     </div>
   </footer>
+
+  <div class="cart-bar" id="cart-bar" hidden>
+    <div class="cart-bar-inner">
+      <span class="cart-bar-text" id="cart-bar-text" aria-live="polite"></span>
+      <button type="button" class="btn-cart-open" id="open-cart">Sepet &amp; sipariş</button>
+    </div>
+  </div>
 
   <div class="modal-backdrop" id="qr-modal" role="dialog" aria-modal="true" aria-labelledby="qr-title" hidden>
     <div class="modal">
@@ -83,6 +91,28 @@
       <div class="modal-actions">
         <button type="button" class="btn-primary" id="copy-link">Bağlantıyı kopyala</button>
         <button type="button" class="btn-ghost" id="close-qr">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop modal-backdrop--cart" id="cart-modal" role="dialog" aria-modal="true" aria-labelledby="cart-title" hidden>
+    <div class="modal modal--cart">
+      <h2 id="cart-title">Sipariş</h2>
+      <p class="cart-intro">Masa numaranızı seçin, sepeti kontrol edin ve gönderin.</p>
+      <label class="cart-field">
+        <span class="cart-field-label">Masa no</span>
+        <select id="cart-table" aria-label="Masa numarası"></select>
+      </label>
+      <div class="cart-lines" id="cart-lines"></div>
+      <p class="cart-total" id="cart-total" aria-live="polite"></p>
+      <label class="cart-field">
+        <span class="cart-field-label">Not (isteğe bağlı)</span>
+        <textarea id="cart-note" rows="2" maxlength="500" placeholder="Örn: az acılı, çocuk sandalyesi…"></textarea>
+      </label>
+      <p class="cart-msg" id="cart-msg" role="status"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn-primary" id="cart-submit">Siparişi gönder</button>
+        <button type="button" class="btn-ghost" id="close-cart">Kapat</button>
       </div>
     </div>
   </div>
