@@ -118,6 +118,15 @@
       p.className = 'dish-desc';
       p.textContent = item.desc || '';
 
+      const allergens = Array.isArray(item.allergens) ? item.allergens : [];
+      const detailBtn = document.createElement('button');
+      detailBtn.type = 'button';
+      detailBtn.className = 'btn-detail';
+      detailBtn.textContent = 'Detay — alerjenler';
+      detailBtn.setAttribute('aria-haspopup', 'dialog');
+      detailBtn.setAttribute('aria-label', item.name + ' — alerjen detayı');
+      detailBtn.addEventListener('click', () => openDetailModal(item.name, allergens));
+
       const footer = document.createElement('div');
       footer.className = 'dish-footer';
       const priceEl = document.createElement('div');
@@ -154,6 +163,7 @@
       footer.appendChild(favBtn);
       body.appendChild(h3);
       body.appendChild(p);
+      body.appendChild(detailBtn);
       body.appendChild(footer);
       card.appendChild(body);
       grid.appendChild(card);
@@ -226,8 +236,75 @@
     if (e.target === modal) closeModal();
   });
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+    if (e.key !== 'Escape') return;
+    if (detailModal.classList.contains('is-open')) closeDetailModal();
+    else if (modal.classList.contains('is-open')) closeModal();
   });
+
+  /* Alerjen detay modal */
+  const detailModal = document.getElementById('detail-modal');
+  const detailTitle = document.getElementById('detail-title');
+  const detailLabel = document.getElementById('detail-label');
+  const detailAllergens = document.getElementById('detail-allergens');
+  const detailFootnote = document.getElementById('detail-footnote');
+  const closeDetailBtn = document.getElementById('close-detail');
+
+  const ALLERGEN_FOOTNOTE =
+    'Liste bilgilendirme amaçlıdır; mutfakta çapraz bulaşma ihtimali olabilir. Ciddi alerjiniz varsa mutlaka personelimize bildirin.';
+
+  let detailLastFocus = null;
+
+  function openDetailModal(dishName, allergens) {
+    if (!detailModal || !detailTitle || !detailAllergens) return;
+    detailLastFocus = document.activeElement;
+    detailTitle.textContent = dishName;
+    if (detailLabel) {
+      detailLabel.textContent =
+        allergens.length > 0
+          ? 'İçerebileceği alerjenler'
+          : 'Kayıtlı alerjen uyarısı';
+    }
+    detailAllergens.innerHTML = '';
+    if (allergens.length > 0) {
+      allergens.forEach((line) => {
+        const li = document.createElement('li');
+        li.textContent = line;
+        detailAllergens.appendChild(li);
+      });
+    } else {
+      const li = document.createElement('li');
+      li.className = 'allergen-list-empty';
+      li.textContent =
+        'Bu ürün için menümüzde özel alerjen satırı tanımlanmamıştır. Yine de hassasiyetiniz varsa personelimize sorunuz.';
+      detailAllergens.appendChild(li);
+    }
+    if (detailFootnote) detailFootnote.textContent = ALLERGEN_FOOTNOTE;
+
+    detailModal.hidden = false;
+    detailModal.classList.add('is-open');
+    document.body.style.overflow = 'hidden';
+    if (closeDetailBtn) closeDetailBtn.focus();
+  }
+
+  function closeDetailModal() {
+    if (!detailModal || !detailModal.classList.contains('is-open')) return;
+    detailModal.classList.remove('is-open');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      detailModal.hidden = true;
+    }, 250);
+    if (detailLastFocus && typeof detailLastFocus.focus === 'function') {
+      detailLastFocus.focus();
+    }
+    detailLastFocus = null;
+  }
+
+  if (closeDetailBtn) closeDetailBtn.addEventListener('click', closeDetailModal);
+  if (detailModal) {
+    detailModal.addEventListener('click', (e) => {
+      if (e.target === detailModal) closeDetailModal();
+    });
+  }
 
   copyBtn.addEventListener('click', async () => {
     const url = menuUrl();

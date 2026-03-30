@@ -340,6 +340,32 @@ img {
   flex: 1;
 }
 
+.btn-detail {
+  margin-top: 0.35rem;
+  align-self: flex-start;
+  padding: 0.45rem 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ember-glow);
+  background: rgba(232, 93, 4, 0.12);
+  border: 1px solid rgba(232, 93, 4, 0.35);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+.btn-detail:hover {
+  background: rgba(232, 93, 4, 0.2);
+  border-color: rgba(232, 93, 4, 0.55);
+  color: var(--cream);
+}
+
+.btn-detail:focus-visible {
+  outline: 2px solid var(--ember);
+  outline-offset: 2px;
+}
+
 .dish-footer {
   display: flex;
   align-items: baseline;
@@ -428,6 +454,60 @@ img {
 }
 
 /* Modal */
+.modal-backdrop--detail {
+  z-index: 210;
+}
+
+.modal--detail {
+  max-width: 420px;
+  text-align: left;
+}
+
+.modal--detail h2 {
+  text-align: left;
+  font-size: 1.35rem;
+  margin-bottom: 0.35rem;
+}
+
+.detail-label {
+  margin: 0 0 0.65rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--gold-dim);
+}
+
+.allergen-list {
+  margin: 0 0 1rem;
+  padding-left: 1.15rem;
+  color: var(--cream);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.allergen-list li {
+  margin-bottom: 0.4rem;
+}
+
+.allergen-list li:last-child {
+  margin-bottom: 0;
+}
+
+.allergen-list .allergen-list-empty {
+  list-style: none;
+  margin-left: -1.15rem;
+  font-style: italic;
+  color: var(--cream-muted);
+}
+
+.allergen-footnote {
+  margin: 0 0 1rem;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--gold-dim);
+}
+
 .modal-backdrop {
   position: fixed;
   inset: 0;
