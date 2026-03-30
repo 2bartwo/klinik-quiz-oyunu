@@ -175,6 +175,7 @@
       img.alt = item.name + ' — ' + (item.desc || '').slice(0, 80);
       img.loading = 'lazy';
       img.decoding = 'async';
+      img.referrerPolicy = 'no-referrer';
       imgWrap.appendChild(img);
       if (item.badge) {
         const b = document.createElement('span');

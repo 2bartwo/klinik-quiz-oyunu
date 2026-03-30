@@ -1,4 +1,4 @@
-/** Ateşten Lezzetler — menü (id: sepet/API için; allergens; görseller ürünle uyumlu) */
+/** Ateşten Lezzetler — menü (görseller: Pexels CDN, stabil erişim) */
 window.MENU_DATA = {
   restaurant: {
     name: 'Ateşten Lezzetler',
@@ -19,7 +19,7 @@ window.MENU_DATA = {
           name: 'Atom',
           desc: 'Yoğurt, köz biber ve sarımsakla harmanlanmış klasik lezzet.',
           price: 145,
-          image: 'https://images.unsplash.com/photo-1571212515416-edbb7b92b94c?w=800&q=80',
+          image: 'https://images.pexels.com/photos/5945563/pexels-photo-5945563.jpeg?auto=compress&cs=tinysrgb&w=800',
           allergens: ['Süt ve süt ürünleri']
         },
         {
@@ -27,7 +27,7 @@ window.MENU_DATA = {
           name: 'Humus',
           desc: 'Tahin ve nohut püresi, zeytinyağı ve sumak ile.',
           price: 130,
-          image: 'https://images.unsplash.com/photo-1577803650713-4e430ef866cd?w=800&q=80',
+          image: 'https://images.pexels.com/photos/4207654/pexels-photo-4207654.jpeg?auto=compress&cs=tinysrgb&w=800',
           allergens: ['Susam (tahin)', 'Baklagiller (nohut)']
         },
         {
@@ -35,7 +35,7 @@ window.MENU_DATA = {
           name: 'Patlıcan közlemesi',
           desc: 'Sarımsaklı yoğurt ve domates sosu eşliğinde.',
           price: 155,
-          image: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=800&q=80',
+          image: 'https://images.pexels.com/photos/5945562/pexels-photo-5945562.jpeg?auto=compress&cs=tinysrgb&w=800',
           allergens: ['Süt ve süt ürünleri']
         },
         {
@@ -43,7 +43,7 @@ window.MENU_DATA = {
           name: 'Çiğ köfte tabağı',
           desc: 'Marul, limon ve nar ekşisi; acı seviyesi isteğe göre.',
           price: 165,
-          image: 'https://images.unsplash.com/photo-1559847844-5315695dadae?w=800&q=80',
+          image: 'https://images.pexels.com/photos/6549930/pexels-photo-6549930.jpeg?auto=compress&cs=tinysrgb&w=800',
           allergens: ['Glüten içeren tahıllar (bulgur)', 'Susam (kullanılan markaya göre değişebilir)']
         }
       ]
@@ -59,7 +59,7 @@ window.MENU_DATA = {
           desc: 'Günlük kuzu eti, közlenmiş domates ve biber.',
           price: 420,
           badge: 'Çok satan',
-          image: 'https://images.unsplash.com/photo-1558030137-748319fe6c9f?w=800&q=80',
+          image: 'https://images.pexels.com/photos/769289/pexels-photo-769289.jpeg?auto=compress&cs=tinysrgb&w=800',
           allergens: ['Hardal (marine sosunda olabilir)', 'Yanında servis edilen pilav veya ekmek glüten içerebilir']
         },
         {
@@ -67,7 +67,7 @@ window.MENU_DATA = {
           name: 'Tavuk kanat',
           desc: 'Baharatlı marine, çıtır deri.',
           price: 320,
-          image: 'https://images.unsplash.com/photo-1527477396000-e27163b481c2?w=800&q=80',
+          image: 'https://images.pexels.com/photos/6066056/pexels-photo-6066056.jpeg?auto=compress&cs=tinysrgb&w=800',
           allergens: ['Glüten (unlu kaplama veya marine çeşidine göre)', 'Hardal (marine)']
         },
         {
@@ -75,7 +75,7 @@ window.MENU_DATA = {
           name: 'Adana kebap',
           desc: 'Acılı kıyma, lavaş ve sumaklı soğan.',
           price: 395,
-          image: 'https://images.unsplash.com/photo-1626082927789-05c56db31e33?w=800&q=80',
+          image: 'https://images.pexels.com/photos/5638245/pexels-photo-5638245.jpeg?auto=compress&cs=tinysrgb&w=800',
           allergens: ['Glüten içeren tahıllar (lavaş)', 'İsteğe bağlı yoğurt ile serviste süt ürünleri']
         },
         {
@@ -83,7 +83,7 @@ window.MENU_DATA = {
           name: 'Karışık ızgara',
           desc: 'Kuzu, tavuk ve köfte; pilav ve salata ile.',
           price: 650,
-          image: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=800&q=80',
+          image: 'https://images.pexels.com/photos/3611843/pexels-photo-3611843.jpeg?auto=compress&cs=tinysrgb&w=800',
           allergens: ['Glüten içeren tahıllar', 'Yumurta (köfte tarifinde)', 'Süt ve süt ürünleri (garnitürde)', 'Hardal (marine)']
         }
       ]
@@ -98,7 +98,7 @@ window.MENU_DATA = {
           name: 'Testi kebabı',
           desc: 'Kuzu güveç, kırılarak servis; misafirlerimize gösteri.',
           price: 480,
-          image: 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=800&q=80',
+          image: 'https://images.pexels.com/photos/6542288/pexels-photo-6542288.jpeg?auto=compress&cs=tinysrgb&w=800',
           allergens: ['Glüten (yanında ekmek)', 'Süt ve süt ürünleri (tereyağı veya yoğurt ile serviste)']
         },
         {
@@ -106,7 +106,7 @@ window.MENU_DATA = {
           name: 'İskender',
           desc: 'Döner, tereyağlı domates sosu ve yoğurt.',
           price: 385,
-          image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800&q=80',
+          image: 'https://images.pexels.com/photos/6205761/pexels-photo-6205761.jpeg?auto=compress&cs=tinysrgb&w=800',
           allergens: ['Süt ve süt ürünleri (yoğurt, tereyağı)', 'Glüten içeren tahıllar (pide)', 'Yumurta (bazı sos tariflerinde)']
         },
         {
@@ -114,7 +114,7 @@ window.MENU_DATA = {
           name: 'Kuzu tandır',
           desc: 'Yavaş pişmiş incik, fırın patates ve mevsim salata.',
           price: 520,
-          image: 'https://images.unsplash.com/photo-1432139555190-58524dae6a55?w=800&q=80',
+          image: 'https://images.pexels.com/photos/618775/pexels-photo-618775.jpeg?auto=compress&cs=tinysrgb&w=800',
           allergens: ['Glüten (yanında ekmek)', 'Süt ve süt ürünleri (tereyağı kullanımına göre)']
         }
       ]
@@ -129,7 +129,7 @@ window.MENU_DATA = {
           name: 'Künefe',
           desc: 'Hatay peyniri, hafif şerbet; kaymak ile.',
           price: 220,
-          image: 'https://images.unsplash.com/photo-1612196318222-6efb3162eda2?w=800&q=80',
+          image: 'https://images.pexels.com/photos/1510692/pexels-photo-1510692.jpeg?auto=compress&cs=tinysrgb&w=800',
           allergens: ['Süt ve süt ürünleri', 'Glüten içeren tahıllar (kadayıf)', 'Kuruyemiş (üzerinde fıstık kullanımı)']
         },
         {
@@ -137,7 +137,7 @@ window.MENU_DATA = {
           name: 'Sütlaç',
           desc: 'Fırınlanmış, tarçınlı klasik.',
           price: 95,
-          image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=800&q=80',
+          image: 'https://images.pexels.com/photos/1346151/pexels-photo-1346151.jpeg?auto=compress&cs=tinysrgb&w=800',
           allergens: ['Süt ve süt ürünleri', 'Yumurta (bazı tariflerde)']
         },
         {
@@ -145,7 +145,7 @@ window.MENU_DATA = {
           name: 'Baklava',
           desc: 'Günlük açılmış, cevizli tepsi.',
           price: 185,
-          image: 'https://images.unsplash.com/photo-1519676867240-f03562e64548?w=800&q=80',
+          image: 'https://images.pexels.com/photos/3992137/pexels-photo-3992137.jpeg?auto=compress&cs=tinysrgb&w=800',
           allergens: ['Glüten içeren tahıllar', 'Süt ve süt ürünleri (şerbet/tereyağı)', 'Kuruyemiş (ceviz)', 'Yumurta (hamur)']
         }
       ]
@@ -160,7 +160,7 @@ window.MENU_DATA = {
           name: 'Ayran',
           desc: 'Ev yapımı, buzlu.',
           price: 45,
-          image: 'https://images.unsplash.com/photo-1571349937195-d80cf3e29415?w=800&q=80',
+          image: 'https://images.pexels.com/photos/5946758/pexels-photo-5946758.jpeg?auto=compress&cs=tinysrgb&w=800',
           allergens: ['Süt ve süt ürünleri']
         },
         {
@@ -168,7 +168,7 @@ window.MENU_DATA = {
           name: 'Taze sıkılmış portakal',
           desc: 'Mevsim portakalı.',
           price: 95,
-          image: 'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=800&q=80',
+          image: 'https://images.pexels.com/photos/1435735/pexels-photo-1435735.jpeg?auto=compress&cs=tinysrgb&w=800',
           allergens: []
         },
         {
@@ -176,7 +176,7 @@ window.MENU_DATA = {
           name: 'Türk kahvesi',
           desc: 'Geleneksel cezve; yanında lokum.',
           price: 75,
-          image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=800&q=80',
+          image: 'https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg?auto=compress&cs=tinysrgb&w=800',
           allergens: ['Kuruyemiş (lokumda fıstık/badem olabilir)', 'Glüten (bazı lokum çeşitlerinde)']
         },
         {
@@ -184,7 +184,7 @@ window.MENU_DATA = {
           name: 'Çay',
           desc: 'İnce belli bardakta.',
           price: 25,
-          image: 'https://images.unsplash.com/photo-1564890369479-c1f66badf310?w=800&q=80',
+          image: 'https://images.pexels.com/photos/1417944/pexels-photo-1417944.jpeg?auto=compress&cs=tinysrgb&w=800',
           allergens: []
         }
       ]

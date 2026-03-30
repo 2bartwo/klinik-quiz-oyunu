@@ -101,6 +101,7 @@
       img.alt = item.name;
       img.loading = 'lazy';
       img.decoding = 'async';
+      img.referrerPolicy = 'no-referrer';
       imgW.appendChild(img);
       const badge = document.createElement('span');
       badge.className = 'm2-temp m2-temp--' + (temp === 'cold' ? 'cold' : 'hot');
