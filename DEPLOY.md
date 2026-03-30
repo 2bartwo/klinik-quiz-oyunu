@@ -104,19 +104,24 @@ Müşteriler `menu.bartwo.me` yazınca doğrudan menüye gitsin; quiz kökü kar
 | Tip   | Name/Host | Value                         |
 |-------|-----------|-------------------------------|
 | CNAME | menu      | Railway’in verdiği adres      |
+| CNAME | menu2     | Railway’in verdiği adres (aynı servis) |
 
-Projede varsayılan olarak `menu.bartwo.me` kökü (`/`) otomatik **`/menu`** sayfasına yönlendirilir. Başka bir alt alan adı kullanacaksanız Railway’de **Variables** ekleyin:
+Projede varsayılan olarak `menu.bartwo.me` kökü (`/`) otomatik **`/menu`** sayfasına yönlendirilir. **Yazlık kahve menüsü** için `menu2.bartwo.me` kökü **`/menu2`** sayfasına gider.
+
+Railway **Variables** (isteğe bağlı):
 
 | Name | Value |
 |------|--------|
-| `MENU_SUBDOMAIN_HOSTS` | `menu.bartwo.me` veya birden fazlaysa virgülle: `menu.bartwo.me,menu2.bartwo.me` |
+| `MENU_SUBDOMAIN_HOSTS` | `menu.bartwo.me` (virgülle birden fazla host; hepsi → `/menu`) |
+| `MENU2_SUBDOMAIN_HOSTS` | `menu2.bartwo.me` (→ `/menu2`) |
 
-Boş bırakmak için değişkeni silin veya kullanmayın; yönlendirme sadece bu hostlar için çalışır.
+Boş bırakılan liste için yönlendirme yapılmaz. Menüyü sadece yol ile kullanmak için: `https://…/menu` ve `https://…/menu2`.
 
 **Özet adresler**
 
 - Quiz: `https://quiz.bartwo.me` (ve `/tahta`)
-- Menü: `https://menu.bartwo.me` → `/menu` veya doğrudan `https://quiz.bartwo.me/menu`
+- Menü: `https://menu.bartwo.me` → `/menu` veya `https://quiz.bartwo.me/menu`
+- Yazlık kahve: `https://menu2.bartwo.me` → `/menu2` veya `https://quiz.bartwo.me/menu2`
 
 ### GitHub Pages (bartwo.me kökü) ile karışıklık
 
@@ -136,4 +141,5 @@ Boş bırakmak için değişkeni silin veya kullanmayın; yönlendirme sadece bu
 - **Oyuncu girişi:** https://quiz.bartwo.me
 - **Tahta:** https://quiz.bartwo.me/tahta
 - **Restoran menüsü:** https://quiz.bartwo.me/menu veya (ayarladıysanız) https://menu.bartwo.me
+- **Yazlık kahve menüsü:** https://quiz.bartwo.me/menu2 veya https://menu2.bartwo.me
 - QR kod tahta sayfasında otomatik olarak quiz.bartwo.me adresini gösterecek; menü QR’ı için menü sayfasındaki kodu veya `menu.bartwo.me` kullanın.

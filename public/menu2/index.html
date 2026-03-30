@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#89cff0">
+  <meta name="description" content="Yazlık Cafe — sıcak ve soğuk kahve menüsü. Yaz teması dijital menü.">
+  <title>Yazlık Cafe — Kahve Menüsü</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/menu2.css">
+</head>
+<body>
+  <header class="m2-header">
+    <a href="#top" class="m2-brand" id="top" aria-label="Üste dön">
+      <svg class="m2-brand-mark" width="46" height="46" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="m2g" x1="0" y1="0" x2="48" y2="48">
+            <stop stop-color="#ffb703"/>
+            <stop offset="1" stop-color="#48cae4"/>
+          </linearGradient>
+          <radialGradient id="sun2" cx="50%" cy="40%">
+            <stop stop-color="#ffe066"/>
+            <stop offset="1" stop-color="#ffb703"/>
+          </radialGradient>
+        </defs>
+        <circle cx="24" cy="24" r="22" fill="#fff" stroke="url(#m2g)" stroke-width="1.5"/>
+        <circle cx="24" cy="22" r="10" fill="url(#sun2)"/>
+        <path d="M8 38c4-6 10-9 16-9s12 3 16 9" stroke="#0a6e7c" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.35"/>
+      </svg>
+      <span class="m2-brand-text">
+        <span class="m2-brand-name">Yazlık Cafe</span>
+        <span class="m2-brand-sub">Kahve menüsü</span>
+      </span>
+    </a>
+    <nav class="m2-header-links" aria-label="Diğer sayfalar">
+      <a href="/menu" class="m2-link-pill">Ateşten menü</a>
+    </nav>
+  </header>
+
+  <section class="m2-hero" aria-labelledby="m2-hero-title">
+    <span class="m2-hero-badge">Yaz · açık alan</span>
+    <h1 id="m2-hero-title">Kahve &amp; serinlik</h1>
+    <p id="m2-hero-blurb">Yükleniyor…</p>
+  </section>
+
+  <div class="m2-filter-wrap">
+    <div class="m2-filter" id="m2-filter" role="group" aria-label="Sıcak veya soğuk filtre"></div>
+  </div>
+
+  <main class="m2-main" id="m2-root"></main>
+
+  <footer class="m2-footer">
+    <div class="m2-footer-inner">
+      <h3 id="m2-footer-name">Yazlık Cafe</h3>
+      <div id="m2-footer-meta"></div>
+      <p class="m2-footer-note">Fiyatlar bilgilendirme amaçlıdır. Görseller temsilidir; içecekler günlük hazırlanır.</p>
+    </div>
+  </footer>
+
+  <script src="js/menu2-data.js"></script>
+  <script src="js/menu2.js"></script>
+</body>
+</html>

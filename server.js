@@ -31,8 +31,14 @@ function saveMenuOrders(orders) {
   fs.writeFileSync(MENU_ORDERS_FILE, JSON.stringify(orders, null, 2), 'utf8');
 }
 
-/** Virgülle ayrılmış hostlar: bu adreslerle gelen / isteği /menu'ye yönlendirilir (örn. menu.bartwo.me). */
+/** Virgülle ayrılmış hostlar: / → /menu (örn. menu.bartwo.me). */
 const MENU_SUBDOMAIN_HOSTS = (process.env.MENU_SUBDOMAIN_HOSTS || 'menu.bartwo.me')
+  .split(',')
+  .map((h) => h.trim().toLowerCase())
+  .filter(Boolean);
+
+/** / → /menu2 (örn. menu2.bartwo.me — yazlık kahve menüsü). */
+const MENU2_SUBDOMAIN_HOSTS = (process.env.MENU2_SUBDOMAIN_HOSTS || 'menu2.bartwo.me')
   .split(',')
   .map((h) => h.trim().toLowerCase())
   .filter(Boolean);
@@ -42,6 +48,9 @@ app.use((req, res, next) => {
   const host = raw.split(':')[0].toLowerCase();
   if (MENU_SUBDOMAIN_HOSTS.length && MENU_SUBDOMAIN_HOSTS.includes(host) && req.path === '/') {
     return res.redirect(302, '/menu');
+  }
+  if (MENU2_SUBDOMAIN_HOSTS.length && MENU2_SUBDOMAIN_HOSTS.includes(host) && req.path === '/') {
+    return res.redirect(302, '/menu2');
   }
   next();
 });
@@ -151,6 +160,10 @@ app.get('/', (req, res) => {
 
 app.get('/menu', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'menu', 'index.html'));
+});
+
+app.get('/menu2', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'menu2', 'index.html'));
 });
 
 app.get('/menu/siparisler', (req, res) => {
@@ -501,5 +514,6 @@ server.listen(PORT, () => {
   console.log(`  Oyuncu girişi: http://localhost:${PORT}`);
   console.log(`  Tahta/grafik:  http://localhost:${PORT}/tahta`);
   console.log(`  Restoran menü: http://localhost:${PORT}/menu`);
-  console.log(`  Sipariş takip: http://localhost:${PORT}/menu/siparisler\n`);
+  console.log(`  Sipariş takip: http://localhost:${PORT}/menu/siparisler`);
+  console.log(`  Yazlık kahve menü: http://localhost:${PORT}/menu2\n`);
 });
